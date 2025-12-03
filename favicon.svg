@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100">
+  <defs>
+    <linearGradient id="grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#667eea;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#764ba2;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  <!-- Background circle -->
+  <circle cx="50" cy="50" r="45" fill="url(#grad)" stroke="#ffffff" stroke-width="2"/>
+  <!-- Layer icon representing screenshot stitching -->
+  <g transform="translate(50,50)">
+    <!-- First layer -->
+    <rect x="-18" y="-15" width="20" height="15" fill="#ffffff" opacity="0.9" rx="2"/>
+    <rect x="-16" y="-13" width="16" height="11" fill="none" stroke="#667eea" stroke-width="1"/>
+    <!-- Second layer (offset) -->
+    <rect x="-8" y="-5" width="20" height="15" fill="#ffffff" opacity="0.9" rx="2"/>
+    <rect x="-6" y="-3" width="16" height="11" fill="none" stroke="#667eea" stroke-width="1"/>
+    <!-- Connection lines -->
+    <line x1="-8" y1="-8" x2="-2" y2="-8" stroke="#764ba2" stroke-width="2" opacity="0.7"/>
+    <line x1="-8" y1="0" x2="-2" y2="0" stroke="#764ba2" stroke-width="2" opacity="0.7"/>
+  </g>
+</svg>

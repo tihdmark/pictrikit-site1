@@ -1,0 +1,481 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>FAQ - Frequently Asked Questions | ScreenStitch</title>
+    <meta name="description" content="Find answers to common questions about ScreenStitch. Learn about features, privacy, supported formats, troubleshooting, and more.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://yourdomain.com/faq.html">
+    
+    <!-- Structured Data - FAQPage Schema -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "FAQPage",
+      "mainEntity": [
+        {
+          "@type": "Question",
+          "name": "What is ScreenStitch?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ScreenStitch is a free online tool that allows you to combine multiple screenshots into a single image. It works entirely in your web browser, with no installation required. You can upload screenshots, arrange them, add annotations, and export the final result - all while keeping your images completely private on your device."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Is ScreenStitch really free?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! ScreenStitch is completely free to use with no hidden costs, premium tiers, or feature limitations. All features are available to everyone at no charge."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Are my screenshots uploaded to your servers?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "No! All image processing happens locally in your web browser using JavaScript. Your screenshots never leave your device, are not uploaded to our servers, and are not stored anywhere except on your own computer. This ensures complete privacy and security for your sensitive screenshots."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "What image formats are supported?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ScreenStitch supports the most common image formats: PNG, JPG/JPEG, GIF, and WebP. These formats cover virtually all screenshots from any device or application. The exported image is saved as PNG format, which supports transparency and provides high quality."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How many screenshots can I combine at once?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "There's no artificial limit on the number of screenshots you can combine. The practical limit depends on your device's memory and browser capabilities. Most users can easily combine 10-20 screenshots without issues."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Does ScreenStitch work on mobile devices?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! ScreenStitch is fully responsive and works on smartphones and tablets. The interface adapts to smaller screens with touch-optimized controls. You can upload screenshots from your photo library, arrange them with touch gestures, and export the final result directly on your mobile device."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Which browsers are supported?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ScreenStitch works on all modern web browsers including Google Chrome, Mozilla Firefox, Safari, and Microsoft Edge. We recommend using the latest version of your browser for the best experience."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I use ScreenStitch offline?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! After the initial page load, ScreenStitch can work offline because all processing happens in your browser. However, you'll need an internet connection to initially load the website and access any updates or new features."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "How do I align screenshots automatically?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "ScreenStitch includes smart alignment features that help position screenshots. You can use the alignment tools to snap screenshots to edges, distribute them evenly, or align them by their centers. Manual fine-tuning is also available by dragging screenshots to your desired position."
+          }
+        },
+        {
+          "@type": "Question",
+          "name": "Can I add text and annotations to my combined screenshots?",
+          "acceptedAnswer": {
+            "@type": "Answer",
+            "text": "Yes! ScreenStitch includes drawing and text annotation tools. You can add text labels, draw arrows, highlight areas, and add other annotations to make your combined screenshots more informative and professional."
+          }
+        }
+      ]
+    }
+    </script>
+    
+    <!-- Apply theme immediately to prevent flash -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/pages.css">
+    
+    <!-- Favicon and Web App Manifest -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/icon-192x192.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+</head>
+<body data-page="faq">
+    <div id="header-placeholder"></div>
+    
+    <main class="page-main">
+        <div class="page-container">
+            <h1 class="page-title" data-i18n="faqTitle">Frequently Asked Questions</h1>
+            <p class="page-subtitle">Find quick answers to common questions about ScreenStitch</p>
+            
+            <div class="content-section">
+                <h2>General Questions</h2>
+                
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>What is ScreenStitch?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                ScreenStitch is a free online tool that allows you to combine multiple screenshots into a single image. It works entirely in your web browser, with no installation required. You can upload screenshots, arrange them, add annotations, and export the final result - all while keeping your images completely private on your device.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Is ScreenStitch really free?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Yes! ScreenStitch is completely free to use with no hidden costs, premium tiers, or feature limitations. All features are available to everyone at no charge. We may display non-intrusive advertisements to support the service, but the tool itself remains free forever.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Do I need to create an account?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                No! You can start using ScreenStitch immediately without creating an account, providing an email address, or signing up for anything. Simply open the website and begin combining your screenshots.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2>Privacy & Security</h2>
+                
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Are my screenshots uploaded to your servers?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                No! This is one of ScreenStitch's key features. All image processing happens locally in your web browser using JavaScript. Your screenshots never leave your device, are not uploaded to our servers, and are not stored anywhere except on your own computer. This ensures complete privacy and security for your sensitive screenshots.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Is it safe to use ScreenStitch for confidential screenshots?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Yes! Since all processing happens locally in your browser and nothing is uploaded to our servers, ScreenStitch is safe for confidential, sensitive, or private screenshots. Your data never leaves your device. However, always follow your organization's security policies regarding handling sensitive information.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>What data do you collect?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                We collect minimal analytics data to improve the service, such as page views, browser type, and general usage patterns. We do NOT collect, store, or have access to your screenshots or any content you create. For complete details, please read our <a href="/privacy.html">Privacy Policy</a>.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2>Features & Usage</h2>
+                
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>What image formats are supported?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                ScreenStitch supports the most common image formats: PNG, JPG/JPEG, GIF, and WebP. These formats cover virtually all screenshots from any device or application. The exported image is saved as PNG format, which supports transparency and provides high quality.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>How many screenshots can I combine at once?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                There's no artificial limit on the number of screenshots you can combine. The practical limit depends on your device's memory and browser capabilities. Most users can easily combine 10-20 screenshots without issues. For very large projects with many high-resolution images, you may experience slower performance.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Can I use ScreenStitch offline?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Yes! After the initial page load, ScreenStitch can work offline because all processing happens in your browser. However, you'll need an internet connection to initially load the website and access any updates or new features.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Does ScreenStitch work on mobile devices?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Yes! ScreenStitch is fully responsive and works on smartphones and tablets. The interface adapts to smaller screens with touch-optimized controls. You can upload screenshots from your photo library, arrange them with touch gestures, and export the final result directly on your mobile device.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>How do I crop an image?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                To crop an image: 1) Select the image on the canvas, 2) Click the Crop button (crop icon) in the sidebar, 3) Adjust the crop rectangle by dragging or resizing, 4) Click Confirm to apply or Cancel to exit. You can also use keyboard shortcuts: K to toggle crop mode, Enter to confirm, and Escape to cancel.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Can I undo a crop operation?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Yes! Crop operations are fully integrated with the undo/redo system. Simply press Ctrl+Z (or Cmd+Z on Mac) to undo a crop, or use the Undo button in the toolbar. You can undo multiple times to go back through your editing history.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Can I crop multiple times?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Absolutely! You can crop the same image multiple times to refine your selection. Each crop operation builds on the previous one, allowing you to progressively trim the image to exactly what you need. If you make a mistake, just use Ctrl+Z to undo.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Can I save my work and come back later?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Currently, ScreenStitch doesn't have a built-in save/load project feature. However, you can download intermediate versions of your work as you progress. We're considering adding project save functionality in a future update. If this feature is important to you, please <a href="/contact.html">let us know</a>!
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2>Technical Questions</h2>
+                
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Which browsers are supported?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                ScreenStitch works on all modern web browsers including Google Chrome, Mozilla Firefox, Safari, and Microsoft Edge. We recommend using the latest version of your browser for the best experience. Internet Explorer is not supported.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Why is ScreenStitch running slowly?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Performance depends on your device's capabilities and the size/number of images you're working with. To improve performance: (1) Close other browser tabs and applications, (2) Use smaller image files when possible, (3) Reduce the number of screenshots on the canvas, (4) Try using a different browser, or (5) Restart your browser to free up memory.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>What's the maximum file size I can upload?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                There's no artificial file size limit imposed by ScreenStitch. The practical limit depends on your device's available memory and browser capabilities. Most modern devices can handle images up to 10-20 MB without issues. Very large images (50+ MB) may cause performance problems or browser crashes.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Can I use ScreenStitch on a Chromebook?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Yes! ScreenStitch works perfectly on Chromebooks since it's a web-based application. Simply open Chrome browser and navigate to ScreenStitch. All features work the same as on Windows, Mac, or Linux computers.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2>Troubleshooting</h2>
+                
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>My screenshots won't upload. What should I do?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Try these solutions: (1) Verify your file format is supported (PNG, JPG, GIF, WebP), (2) Check that the file isn't corrupted by opening it in another program, (3) Try a different upload method (drag-drop instead of clicking), (4) Refresh the page and try again, (5) Try a different browser, or (6) Clear your browser cache and cookies.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>The page is blank or not loading properly</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                This usually indicates a browser compatibility issue or cached data problem. Try: (1) Hard refresh the page (Ctrl+Shift+R or Cmd+Shift+R), (2) Clear your browser cache, (3) Disable browser extensions temporarily, (4) Try a different browser, or (5) Check if JavaScript is enabled in your browser settings.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>I can't find my screenshots after uploading</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Your screenshots might be outside the visible canvas area. Try: (1) Zoom out using the zoom controls or mouse wheel, (2) Click the "Fit to Screen" button (expand icon) to see the entire canvas, (3) Pan around by holding spacebar and dragging, or (4) If all else fails, refresh the page and upload again.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>The download button isn't working</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Check these common issues: (1) Ensure your browser allows downloads from our site, (2) Check if your browser's download folder is full or has permission issues, (3) Try using the "Copy to Clipboard" option instead, then paste into an image editor and save manually, (4) Disable any browser extensions that might block downloads, or (5) Try a different browser.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2>Still Have Questions?</h2>
+                <p>If you couldn't find the answer you're looking for, we're here to help!</p>
+                <ul>
+                    <li>Check our <a href="/tutorial.html">detailed tutorial</a> for step-by-step instructions</li>
+                    <li>Explore all <a href="/features.html">features and capabilities</a></li>
+                    <li><a href="/contact.html">Contact our support team</a> for personalized assistance</li>
+                </ul>
+            </div>
+        </div>
+        <!-- Still Have Questions? -->
+        <div class="content-section" style="background: var(--bg-secondary); padding: 40px; border-radius: 12px; margin-top: 60px; text-align: center;">
+            <h2 style="margin-bottom: 20px;">Still Have Questions?</h2>
+            <p style="color: var(--text-secondary); margin-bottom: 30px;">Check out these helpful resources</p>
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; max-width: 800px; margin: 0 auto;">
+                <a href="/tutorial.html" style="display: block; padding: 20px; background: var(--bg-primary); border-radius: 8px; text-decoration: none; color: var(--text-primary); border: 2px solid var(--border-color); transition: all 0.3s;">
+                    <i class="fas fa-graduation-cap" style="font-size: 32px; color: #667eea; margin-bottom: 10px;"></i>
+                    <h3 style="margin: 10px 0; font-size: 16px;">Tutorial</h3>
+                </a>
+                <a href="/features.html" style="display: block; padding: 20px; background: var(--bg-primary); border-radius: 8px; text-decoration: none; color: var(--text-primary); border: 2px solid var(--border-color); transition: all 0.3s;">
+                    <i class="fas fa-star" style="font-size: 32px; color: #667eea; margin-bottom: 10px;"></i>
+                    <h3 style="margin: 10px 0; font-size: 16px;">Features</h3>
+                </a>
+                <a href="/about.html" style="display: block; padding: 20px; background: var(--bg-primary); border-radius: 8px; text-decoration: none; color: var(--text-primary); border: 2px solid var(--border-color); transition: all 0.3s;">
+                    <i class="fas fa-info-circle" style="font-size: 32px; color: #667eea; margin-bottom: 10px;"></i>
+                    <h3 style="margin: 10px 0; font-size: 16px;">About Us</h3>
+                </a>
+                <a href="/contact.html" style="display: block; padding: 20px; background: var(--bg-primary); border-radius: 8px; text-decoration: none; color: var(--text-primary); border: 2px solid var(--border-color); transition: all 0.3s;">
+                    <i class="fas fa-envelope" style="font-size: 32px; color: #667eea; margin-bottom: 10px;"></i>
+                    <h3 style="margin: 10px 0; font-size: 16px;">Contact</h3>
+                </a>
+            </div>
+        </div>
+    </main>
+    
+    <div id="footer-placeholder"></div>
+    
+    <script src="/assets/js/i18n.js"></script>
+    <script src="/assets/js/components.js"></script>
+    <script src="/assets/js/analytics.js"></script>
+    
+    <script>
+        // FAQ toggle function
+        function toggleFaq(button) {
+            button.classList.toggle('active');
+            const answer = button.nextElementSibling;
+            answer.classList.toggle('show');
+        }
+    </script>
+</body>
+</html>

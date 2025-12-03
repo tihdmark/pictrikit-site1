@@ -1,0 +1,227 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    
+    <!-- SEO Meta Tags -->
+    <title>Contact Us - PictriKit</title>
+    <meta name="description" content="Get in touch with the PictriKit team. We're here to help with questions, feedback, or support for our screenshot stitching tool.">
+    <meta name="robots" content="index, follow">
+    <link rel="canonical" href="https://pictrikit.com/contact.html">
+    
+    <!-- Apply theme immediately to prevent flash -->
+    <script>
+        (function() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+        })();
+    </script>
+    
+    <!-- Preconnect to external resources -->
+    <link rel="preconnect" href="https://cdnjs.cloudflare.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    
+    <!-- Stylesheets -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" crossorigin="anonymous">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/pages.css">
+    
+    <!-- Favicon and Web App Manifest -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+    <link rel="icon" type="image/png" sizes="32x32" href="/assets/images/favicon/icon-32x32.png">
+    <link rel="icon" type="image/png" sizes="16x16" href="/assets/images/favicon/icon-16x16.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/assets/images/favicon/icon-192x192.png">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    <meta name="theme-color" content="#0066cc">
+</head>
+<body data-page="contact">
+    <div id="header-placeholder"></div>
+    
+    <main class="page-main">
+        <div class="page-container">
+            <h1 class="page-title" data-i18n="contactTitle">Contact Us</h1>
+            <p class="page-subtitle">We'd love to hear from you! Get in touch with any questions, feedback, or suggestions.</p>
+            
+            <div class="content-section">
+                <h2>Send Us a Message</h2>
+                <p>Fill out the form below and we'll get back to you as soon as possible, typically within 24-48 hours.</p>
+                
+                <form class="contact-form" id="contactForm" onsubmit="handleSubmit(event)">
+                    <div class="form-group">
+                        <label for="name" class="form-label">Your Name *</label>
+                        <input type="text" id="name" name="name" class="form-input" required placeholder="Enter your name">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="email" class="form-label">Email Address *</label>
+                        <input type="email" id="email" name="email" class="form-input" required placeholder="your.email@example.com">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="subject" class="form-label">Subject *</label>
+                        <input type="text" id="subject" name="subject" class="form-input" required placeholder="What is this about?">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="message" class="form-label">Message *</label>
+                        <textarea id="message" name="message" class="form-textarea" required placeholder="Tell us more about your question or feedback..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="form-button">
+                        <i class="fas fa-paper-plane"></i> Send Message
+                    </button>
+                </form>
+            </div>
+            
+            <div class="content-section">
+                <h2>Other Ways to Reach Us</h2>
+                
+                <div class="feature-grid">
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-envelope"></i>
+                        </div>
+                        <h3>Email</h3>
+                        <p>For general inquiries:<br><strong>dmcxal101@gmail.com</strong></p>
+                        <p>For support:<br><strong>dmcxal101@gmail.com</strong></p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-bug"></i>
+                        </div>
+                        <h3>Report a Bug</h3>
+                        <p>Found a bug or issue? Let us know so we can fix it quickly.</p>
+                        <p><strong>dmcxal101@gmail.com</strong></p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-lightbulb"></i>
+                        </div>
+                        <h3>Feature Requests</h3>
+                        <p>Have an idea for a new feature? We'd love to hear it!</p>
+                        <p><strong>dmcxal101@gmail.com</strong></p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2>Frequently Asked Questions</h2>
+                <p>Before reaching out, you might find your answer in our <a href="/faq.html">FAQ page</a>. We've compiled answers to the most common questions about using PictriKit.</p>
+                
+                <div class="faq-list">
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>How quickly will I receive a response?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                We typically respond to all inquiries within 24-48 hours during business days. For urgent issues, please mention "URGENT" in your subject line.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Do you offer technical support?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Yes! We're happy to help with any technical issues you encounter. Please include details about your browser, operating system, and the specific problem you're experiencing.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="faq-item">
+                        <button class="faq-question" onclick="toggleFaq(this)">
+                            <span>Can I suggest new features?</span>
+                            <i class="fas fa-chevron-down"></i>
+                        </button>
+                        <div class="faq-answer">
+                            <div class="faq-answer-content">
+                                Absolutely! We love hearing from our users. Send your feature suggestions to dmcxal101@gmail.com or use the contact form above.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="content-section">
+                <h2>Business Inquiries</h2>
+                <p>For partnership opportunities, advertising, or other business-related inquiries, please contact:</p>
+                <p><strong>Email:</strong> dmcxal101@gmail.com</p>
+            </div>
+            
+            <div class="content-section">
+                <h2>Follow Us</h2>
+                <p>Stay updated with the latest news, features, and tips:</p>
+                <div class="social-links">
+                    <a href="#" class="social-link" aria-label="Twitter">
+                        <i class="fab fa-twitter"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="Facebook">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="GitHub">
+                        <i class="fab fa-github"></i>
+                    </a>
+                    <a href="#" class="social-link" aria-label="LinkedIn">
+                        <i class="fab fa-linkedin"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </main>
+    
+    <div id="footer-placeholder"></div>
+    
+    <script src="/assets/js/i18n.js"></script>
+    <script src="/assets/js/components.js"></script>
+    <script src="/assets/js/analytics.js"></script>
+    
+    <script>
+        // FAQ toggle function
+        function toggleFaq(button) {
+            button.classList.toggle('active');
+            const answer = button.nextElementSibling;
+            answer.classList.toggle('show');
+        }
+        
+        // Form submission handler
+        function handleSubmit(event) {
+            event.preventDefault();
+            
+            const form = event.target;
+            const formData = new FormData(form);
+            
+            // Track form submission
+            if (typeof trackFormSubmission === 'function') {
+                trackFormSubmission('contact');
+            }
+            
+            // In a real application, you would send this data to a server
+            // For now, we'll just show a success message
+            
+            const name = formData.get('name');
+            alert(`Thank you, ${name}! Your message has been received. We'll get back to you soon.`);
+            
+            // Reset form
+            form.reset();
+            
+            // In production, you would do something like:
+            // fetch('/api/contact', {
+            //     method: 'POST',
+            //     body: formData
+            // }).then(response => {
+            //     // Handle response
+            // });
+        }
+    </script>
+</body>
+</html>

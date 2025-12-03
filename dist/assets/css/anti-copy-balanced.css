@@ -1,0 +1,201 @@
+/**
+ * PictriKit Anti-Copy Protection Styles (Balanced Version)
+ * Copyright © 2024 PictriKit.com - All Rights Reserved
+ * 平衡版本：保护源码但不影响用户体验
+ */
+
+/* ==========================================
+   1. 选择性禁用文本选择
+   ========================================== */
+
+/* 默认允许选择 */
+* {
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    user-select: text;
+}
+
+/* 只禁用代码和脚本相关元素 */
+pre,
+code,
+script,
+style,
+.no-select,
+.protected-code {
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    -ms-user-select: none !important;
+    user-select: none !important;
+}
+
+/* 确保交互元素可选择 */
+input,
+textarea,
+[contenteditable="true"],
+.allow-select,
+canvas,
+button,
+a {
+    -webkit-user-select: text !important;
+    -moz-user-select: text !important;
+    -ms-user-select: text !important;
+    user-select: text !important;
+}
+
+/* ==========================================
+   2. 图片保护（保持不变）
+   ========================================== */
+
+img {
+    -webkit-user-drag: none !important;
+    -khtml-user-drag: none !important;
+    -moz-user-drag: none !important;
+    -o-user-drag: none !important;
+    user-drag: none !important;
+    pointer-events: auto !important; /* 允许点击 */
+}
+
+/* Canvas 需要完全可交互 */
+canvas {
+    pointer-events: auto !important;
+    -webkit-user-select: none !important;
+    -moz-user-select: none !important;
+    user-select: none !important;
+}
+
+/* ==========================================
+   3. 版权水印（更低调）
+   ========================================== */
+
+body::after {
+    content: "© PictriKit.com" !important;
+    position: fixed !important;
+    bottom: 15px !important;
+    right: 15px !important;
+    font-size: 10px !important;
+    color: rgba(0, 0, 0, 0.08) !important;
+    z-index: 99999 !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    font-family: Arial, sans-serif !important;
+    font-weight: 600 !important;
+}
+
+/* 暗色主题水印 */
+[data-theme="dark"] body::after {
+    color: rgba(255, 255, 255, 0.08) !important;
+}
+
+/* ==========================================
+   4. 打印保护（保持不变）
+   ========================================== */
+
+@media print {
+    body::before {
+        content: "© 2024 PictriKit.com - 打印时请保留版权信息" !important;
+        display: block !important;
+        text-align: center !important;
+        font-size: 12px !important;
+        padding: 20px !important;
+        color: #666 !important;
+        border-bottom: 1px solid #ddd !important;
+    }
+}
+
+/* ==========================================
+   5. DMCA 标识（更低调）
+   ========================================== */
+
+.dmca-badge {
+    position: fixed !important;
+    bottom: 45px !important;
+    right: 15px !important;
+    font-size: 9px !important;
+    color: rgba(220, 53, 69, 0.15) !important;
+    z-index: 99999 !important;
+    pointer-events: none !important;
+    user-select: none !important;
+    font-family: Arial, sans-serif !important;
+    font-weight: 700 !important;
+}
+
+/* ==========================================
+   6. 动画效果
+   ========================================== */
+
+@keyframes slideIn {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+/* ==========================================
+   7. 响应式调整
+   ========================================== */
+
+@media (max-width: 768px) {
+    body::after {
+        font-size: 8px !important;
+        bottom: 10px !important;
+        right: 10px !important;
+    }
+    
+    .dmca-badge {
+        font-size: 7px !important;
+        bottom: 30px !important;
+        right: 10px !important;
+    }
+}
+
+/* ==========================================
+   8. 允许右键的区域
+   ========================================== */
+
+.allow-context,
+canvas,
+input,
+textarea,
+button,
+a,
+select {
+    /* 这些元素允许右键菜单 */
+}
+
+/* ==========================================
+   9. 高对比度和无障碍支持
+   ========================================== */
+
+@media (prefers-contrast: high) {
+    body::after {
+        color: rgba(0, 0, 0, 0.15) !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    * {
+        animation: none !important;
+        transition: none !important;
+    }
+}
+
+/* ==========================================
+   10. 确保按钮和链接可点击
+   ========================================== */
+
+button,
+a,
+input,
+textarea,
+select,
+[role="button"],
+[onclick],
+.clickable {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+}
