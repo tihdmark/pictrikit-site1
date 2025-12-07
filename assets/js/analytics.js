@@ -1,10 +1,10 @@
 /**
  * Google Analytics 4 Integration
- * This file handles all analytics tracking for ScreenStitch
+ * This file handles all analytics tracking for PictriKit
  */
 
 // Configuration
-const GA_MEASUREMENT_ID = 'G-XXXXXXXXXX'; // Replace with your actual GA4 Measurement ID
+const GA_MEASUREMENT_ID = 'G-F3GLBLC9JW'; // PictriKit GA4 Measurement ID
 
 /**
  * Initialize Google Analytics 4

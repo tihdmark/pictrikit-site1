@@ -527,11 +527,13 @@
         .drawer-content {
             max-height: 0;
             overflow: hidden;
-            transition: max-height 0.3s;
+            transition: max-height 0.3s ease-out;
+            will-change: max-height;
         }
 
         .drawer-content.show {
             max-height: 500px;
+            transition: max-height 0.4s ease-in;
         }
 
         .drawer-inner {
@@ -1621,14 +1623,18 @@
     width: 90%;
     max-width: 600px;
     max-height: 80vh;
+    min-height: 200px;
     box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
     position: relative;
-    transform: scale(0.9);
-    transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    transform: translateY(20px);
+    opacity: 0;
+    transition: transform 0.25s ease-out, opacity 0.25s ease-out;
+    will-change: transform, opacity;
 }
 
 .settings-modal.show .settings-modal-content {
-    transform: scale(1);
+    transform: translateY(0);
+    opacity: 1;
 }
 
 .settings-modal-close {
@@ -1668,6 +1674,24 @@
     color: var(--text-primary);
     margin-bottom: 24px;
     padding-right: 40px;
+}
+
+/* 模态框中的颜色选择器容器 - 防止初始化跳动 */
+#shapeColorPickerModal,
+#drawColorPickerModal,
+#textColorPickerModal,
+#bgColorPickerModal {
+    min-height: 42px;
+    display: flex;
+    align-items: center;
+}
+
+#shapeColorPickerModal .pickr .pcr-button,
+#drawColorPickerModal .pickr .pcr-button,
+#textColorPickerModal .pickr .pcr-button {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
 }
 
 @media (max-width: 768px) {

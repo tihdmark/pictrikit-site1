@@ -13,11 +13,16 @@ const I18n = {
     // 加载语言文件
     async loadLanguage(lang) {
         try {
+            console.log(`[I18n] Fetching /lang/${lang}.json`);
             const response = await fetch(`/lang/${lang}.json`);
-            if (!response.ok) throw new Error(`Failed to load language: ${lang}`);
-            this.translations[lang] = await response.json();
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}: Failed to load language: ${lang}`);
+            }
+            const data = await response.json();
+            this.translations[lang] = data;
+            console.log(`[I18n] Loaded ${lang} with ${Object.keys(data).length} keys`);
         } catch (error) {
-            console.error('Error loading language:', error);
+            console.error('[I18n] Error loading language:', error);
             // 如果加载失败，尝试加载英语作为后备
             if (lang !== 'en') {
                 await this.loadLanguage('en');
@@ -28,18 +33,34 @@ const I18n = {
     
     // 切换语言
     async changeLanguage(lang) {
-        console.log(`Changing language to: ${lang}`);
-        if (!this.translations[lang]) {
-            await this.loadLanguage(lang);
-        }
-        this.currentLang = lang;
-        this.updateUI();
-        localStorage.setItem('preferredLanguage', lang);
+        console.log(`[I18n] Changing language to: ${lang}`);
+        console.log(`[I18n] Current translations:`, Object.keys(this.translations));
         
-        // 更新语言选择器的值
-        const langSelect = document.getElementById('languageSelect');
-        if (langSelect && langSelect.value !== lang) {
-            langSelect.value = lang;
+        try {
+            if (!this.translations[lang]) {
+                console.log(`[I18n] Loading language file for: ${lang}`);
+                await this.loadLanguage(lang);
+            }
+            
+            if (!this.translations[lang]) {
+                console.error(`[I18n] Failed to load language: ${lang}`);
+                return;
+            }
+            
+            this.currentLang = lang;
+            console.log(`[I18n] Language set to: ${this.currentLang}`);
+            
+            this.updateUI();
+            localStorage.setItem('language', lang);
+            localStorage.setItem('preferredLanguage', lang);
+            
+            // 更新语言选择器的值
+            const langSelect = document.getElementById('languageSelect');
+            if (langSelect && langSelect.value !== lang) {
+                langSelect.value = lang;
+            }
+        } catch (error) {
+            console.error(`[I18n] Error changing language:`, error);
         }
     },
     
@@ -69,8 +90,24 @@ const I18n = {
                 }
             });
             
+            // 更新 SEO 内容显示
+            this.updateSEOContent();
+            
             // 更新语言选择器显示
             this.updateLanguageSelector();
+        });
+    },
+    
+    // 更新 SEO 内容的语言显示
+    updateSEOContent() {
+        const seoTexts = document.querySelectorAll('.seo-text[data-lang]');
+        seoTexts.forEach(text => {
+            const lang = text.getAttribute('data-lang');
+            if (lang === this.currentLang) {
+                text.style.display = 'block';
+            } else {
+                text.style.display = 'none';
+            }
         });
     },
     
@@ -99,8 +136,8 @@ const I18n = {
     
     // 从浏览器或 localStorage 获取首选语言
     getPreferredLanguage() {
-        // 首先检查 localStorage
-        const saved = localStorage.getItem('preferredLanguage');
+        // 首先检查 localStorage (支持两种键名)
+        const saved = localStorage.getItem('language') || localStorage.getItem('preferredLanguage');
         if (saved) return saved;
         
         // 然后检查浏览器语言

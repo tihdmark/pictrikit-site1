@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-F3GLBLC9JW"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-F3GLBLC9JW');
+    </script>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search - PictriKit</title>
+    <meta name="description" content="Search PictriKit for screenshot stitching tools, tutorials, and help.">
+    <meta name="robots" content="noindex, follow">
+    <link rel="canonical" href="https://pictrikit.com/search.html">
+    
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#667eea">
+    
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f8f9fa;
+            --text-primary: #1a1a1a;
+            --text-secondary: #6c757d;
+            --accent-color: #667eea;
+            --border-color: #dee2e6;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            min-height: 100vh;
+        }
+        
+        .header {
+            background: var(--bg-primary);
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .header-content {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-color);
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .search-container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 0 20px;
+        }
+        
+        .search-box {
+            background: var(--bg-primary);
+            border-radius: 12px;
+            padding: 30px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        
+        .search-input-wrapper {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .search-input {
+            flex: 1;
+            padding: 15px 20px;
+            font-size: 16px;
+            border: 2px solid var(--border-color);
+            border-radius: 8px;
+            outline: none;
+            transition: border-color 0.2s;
+        }
+        
+        .search-input:focus {
+            border-color: var(--accent-color);
+        }
+        
+        .search-btn {
+            padding: 15px 30px;
+            background: var(--accent-color);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .search-btn:hover {
+            background: #5a6fd6;
+        }
+        
+        .results {
+            margin-top: 30px;
+        }
+        
+        .result-item {
+            background: var(--bg-primary);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
+        .result-item h3 {
+            margin-bottom: 8px;
+        }
+        
+        .result-item h3 a {
+            color: var(--accent-color);
+            text-decoration: none;
+        }
+        
+        .result-item h3 a:hover {
+            text-decoration: underline;
+        }
+        
+        .result-item p {
+            color: var(--text-secondary);
+            font-size: 14px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 40px;
+            color: var(--text-secondary);
+        }
+        
+        .quick-links {
+            margin-top: 40px;
+        }
+        
+        .quick-links h3 {
+            margin-bottom: 15px;
+            color: var(--text-secondary);
+            font-size: 14px;
+            text-transform: uppercase;
+        }
+        
+        .quick-links-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 15px;
+        }
+        
+        .quick-link {
+            background: var(--bg-primary);
+            padding: 15px 20px;
+            border-radius: 8px;
+            text-decoration: none;
+            color: var(--text-primary);
+            transition: transform 0.2s, box-shadow 0.2s;
+        }
+        
+        .quick-link:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+    </style>
+</head>
+<body>
+    <header class="header">
+        <div class="header-content">
+            <a href="/" class="logo">
+                <svg width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="2" y="3" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="14" y="3" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="2" y="15" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <rect x="14" y="15" width="8" height="6" rx="1" stroke="currentColor" stroke-width="1.5"/>
+                    <path d="M10 6h4M10 18h4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+                </svg>
+                PictriKit
+            </a>
+        </div>
+    </header>
+    
+    <div class="search-container">
+        <div class="search-box">
+            <form id="searchForm" action="/search.html" method="get">
+                <div class="search-input-wrapper">
+                    <input type="text" name="q" id="searchInput" class="search-input" placeholder="Search PictriKit..." autocomplete="off">
+                    <button type="submit" class="search-btn">Search</button>
+                </div>
+            </form>
+        </div>
+        
+        <div id="results" class="results"></div>
+        
+        <div class="quick-links">
+            <h3>Quick Links</h3>
+            <div class="quick-links-grid">
+                <a href="/app.html" class="quick-link">🖼️ Launch App</a>
+                <a href="/features.html" class="quick-link">✨ Features</a>
+                <a href="/tutorial.html" class="quick-link">📖 Tutorial</a>
+                <a href="/faq.html" class="quick-link">❓ FAQ</a>
+                <a href="/contact.html" class="quick-link">📧 Contact</a>
+                <a href="/about.html" class="quick-link">ℹ️ About</a>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Site content for search
+        const siteContent = [
+            {
+                title: 'Screenshot Stitching Tool',
+                url: '/app.html',
+                description: 'Combine multiple screenshots into one image. Perfect for chat screenshots, tutorials, and documentation.',
+                keywords: ['screenshot', 'stitch', 'combine', 'merge', 'image', 'tool', 'app']
+            },
+            {
+                title: 'Features',
+                url: '/features.html',
+                description: 'Explore all features: smart alignment, annotation tools, privacy blur, multiple export formats.',
+                keywords: ['features', 'alignment', 'annotation', 'blur', 'export', 'crop', 'compress']
+            },
+            {
+                title: 'Tutorial',
+                url: '/tutorial.html',
+                description: 'Learn how to use PictriKit step by step. Upload, arrange, annotate, and export your images.',
+                keywords: ['tutorial', 'guide', 'how to', 'learn', 'help', 'instructions']
+            },
+            {
+                title: 'FAQ',
+                url: '/faq.html',
+                description: 'Frequently asked questions about PictriKit. Privacy, supported formats, and more.',
+                keywords: ['faq', 'questions', 'help', 'support', 'privacy', 'format']
+            },
+            {
+                title: 'Contact Us',
+                url: '/contact.html',
+                description: 'Get in touch with the PictriKit team. Send feedback, report issues, or ask questions.',
+                keywords: ['contact', 'feedback', 'support', 'email', 'help']
+            },
+            {
+                title: 'About PictriKit',
+                url: '/about.html',
+                description: 'Learn about PictriKit - free online screenshot stitching and image processing tool.',
+                keywords: ['about', 'pictrikit', 'team', 'mission']
+            },
+            {
+                title: 'Privacy Policy',
+                url: '/privacy.html',
+                description: 'Our privacy policy. All image processing is done locally in your browser.',
+                keywords: ['privacy', 'policy', 'data', 'security', 'local']
+            },
+            {
+                title: 'Terms of Service',
+                url: '/terms.html',
+                description: 'Terms of service for using PictriKit.',
+                keywords: ['terms', 'service', 'legal', 'conditions']
+            }
+        ];
+        
+        function search(query) {
+            if (!query || query.trim() === '') return [];
+            
+            const searchTerms = query.toLowerCase().split(' ').filter(t => t.length > 0);
+            const results = [];
+            
+            siteContent.forEach(page => {
+                let score = 0;
+                const titleLower = page.title.toLowerCase();
+                const descLower = page.description.toLowerCase();
+                
+                searchTerms.forEach(term => {
+                    if (titleLower.includes(term)) score += 10;
+                    if (descLower.includes(term)) score += 5;
+                    if (page.keywords.some(k => k.includes(term))) score += 3;
+                });
+                
+                if (score > 0) {
+                    results.push({ ...page, score });
+                }
+            });
+            
+            return results.sort((a, b) => b.score - a.score);
+        }
+        
+        function displayResults(results, query) {
+            const container = document.getElementById('results');
+            
+            if (results.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <p>No results found for "<strong>${escapeHtml(query)}</strong>"</p>
+                        <p>Try different keywords or browse the quick links below.</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = results.map(r => `
+                <div class="result-item">
+                    <h3><a href="${r.url}">${escapeHtml(r.title)}</a></h3>
+                    <p>${escapeHtml(r.description)}</p>
+                </div>
+            `).join('');
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Handle URL parameter
+        const urlParams = new URLSearchParams(window.location.search);
+        const query = urlParams.get('q');
+        
+        if (query) {
+            document.getElementById('searchInput').value = query;
+            const results = search(query);
+            displayResults(results, query);
+        }
+        
+        // Handle form submit
+        document.getElementById('searchForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const query = document.getElementById('searchInput').value;
+            if (query.trim()) {
+                window.history.pushState({}, '', `/search.html?q=${encodeURIComponent(query)}`);
+                const results = search(query);
+                displayResults(results, query);
+            }
+        });
+    </script>
+</body>
+</html>

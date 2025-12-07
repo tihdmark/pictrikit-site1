@@ -1,11 +1,11 @@
 {
-  "name": "ScreenStitch - Screenshot Stitching Tool",
-  "short_name": "ScreenStitch",
+  "name": "PictriKit - Screenshot Stitching Tool",
+  "short_name": "PictriKit",
   "description": "Free online tool to combine and stitch multiple screenshots into one image",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#0066cc",
+  "theme_color": "#667eea",
   "orientation": "any",
   "icons": [
     {

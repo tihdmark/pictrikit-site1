@@ -2070,10 +2070,9 @@
             }
             
             modalBody.innerHTML = content;
-            modal.classList.add('show');
             
-            // 重新初始化颜色选择器（如果需要）
-            setTimeout(() => {
+            // 先初始化颜色选择器，再显示模态框
+            requestAnimationFrame(() => {
                 if (settingsType === 'background' && typeof Pickr !== 'undefined') {
                     initBgColorPickerModal();
                 } else if (settingsType === 'shape' && typeof Pickr !== 'undefined') {
@@ -2083,7 +2082,12 @@
                 } else if (settingsType === 'text' && typeof Pickr !== 'undefined') {
                     initTextColorPickerModal();
                 }
-            }, 100);
+                
+                // 颜色选择器初始化后再显示模态框
+                requestAnimationFrame(() => {
+                    modal.classList.add('show');
+                });
+            });
         }
 
         function closeSettingsModal() {

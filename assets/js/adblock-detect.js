@@ -77,7 +77,7 @@
             <h2 style="color: #1a1a1a; margin-bottom: 16px; font-size: 24px;">检测到广告屏蔽器</h2>
             <p style="color: #666; line-height: 1.6; margin-bottom: 24px;">
                 我们注意到您正在使用广告屏蔽器。<br>
-                ScreenStitch 是一个完全免费的工具，我们依靠广告来维持服务器运营和持续开发。
+                PictriKit 是一个完全免费的工具，我们依靠广告来维持服务器运营和持续开发。
             </p>
             <p style="color: #666; line-height: 1.6; margin-bottom: 32px;">
                 请将我们添加到白名单，或者关闭广告屏蔽器以继续使用。

@@ -1,3 +1,9 @@
 User-agent: *
 Allow: /
-Sitemap: https://https://www.pictrikit.com/sitemap.xml
+
+# Sitemap
+Sitemap: https://pictrikit.com/sitemap.xml
+
+# Disallow admin and private paths
+Disallow: /admin/
+Disallow: /private/

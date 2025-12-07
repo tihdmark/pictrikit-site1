@@ -19,8 +19,20 @@ const mimeTypes = {
 
 const server = http.createServer((req, res) => {
     let filePath = '.' + req.url;
+    
+    // Handle root directory
     if (filePath === './') {
         filePath = './index.html';
+    }
+    
+    // Handle directory requests (e.g., /blog/)
+    if (filePath.endsWith('/')) {
+        filePath += 'index.html';
+    }
+    
+    // Check if path is a directory and append index.html
+    if (fs.existsSync(filePath) && fs.statSync(filePath).isDirectory()) {
+        filePath = path.join(filePath, 'index.html');
     }
 
     const extname = String(path.extname(filePath)).toLowerCase();
@@ -31,6 +43,18 @@ const server = http.createServer((req, res) => {
             if (error.code === 'ENOENT') {
                 res.writeHead(404, { 'Content-Type': 'text/html' });
                 res.end('<h1>404 Not Found</h1>', 'utf-8');
+            } else if (error.code === 'EISDIR') {
+                // If it's a directory, try to serve index.html
+                const indexPath = path.join(filePath, 'index.html');
+                fs.readFile(indexPath, (err, indexContent) => {
+                    if (err) {
+                        res.writeHead(404, { 'Content-Type': 'text/html' });
+                        res.end('<h1>404 Not Found</h1>', 'utf-8');
+                    } else {
+                        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' });
+                        res.end(indexContent, 'utf-8');
+                    }
+                });
             } else {
                 res.writeHead(500);
                 res.end('Server Error: ' + error.code, 'utf-8');

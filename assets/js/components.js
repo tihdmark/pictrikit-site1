@@ -7,7 +7,7 @@ const Components = {
             <nav class="page-nav">
                 <a href="/" class="page-logo" title="Return to Home">
                     <i class="fas fa-layer-group"></i>
-                    <span>ScreenStitch</span>
+                    <span>PictriKit</span>
                 </a>
                 
                 <ul class="nav-menu" id="navMenu">
@@ -60,7 +60,7 @@ const Components = {
         <footer class="page-footer">
             <div class="footer-content">
                 <div class="footer-section">
-                    <h4>ScreenStitch</h4>
+                    <h4>PictriKit</h4>
                     <p data-i18n="footerDesc">Free online screenshot stitching tool</p>
                 </div>
                 <div class="footer-section">
@@ -96,7 +96,7 @@ const Components = {
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2024 ScreenStitch. <span data-i18n="footerRights">All rights reserved.</span></p>
+                <p>&copy; 2025 PictriKit. <span data-i18n="footerRights">All rights reserved.</span></p>
             </div>
         </footer>
         `;
@@ -121,6 +121,9 @@ const Components = {
 
         // 设置事件监听
         this.setupEventListeners();
+        
+        // 初始化 Cookie 同意横幅
+        this.initCookieConsent();
     },
 
     // 切换语言下拉菜单
@@ -231,7 +234,6 @@ const Components = {
 
     // 显示提示消息
     showToast(message) {
-        // 创建或获取 toast 元素
         let toast = document.getElementById('toast');
         if (!toast) {
             toast = document.createElement('div');
@@ -246,6 +248,45 @@ const Components = {
         setTimeout(() => {
             toast.classList.remove('show');
         }, 2000);
+    },
+
+    // Cookie 同意横幅
+    initCookieConsent() {
+        if (localStorage.getItem('cookieConsent')) return;
+        
+        const banner = document.createElement('div');
+        banner.id = 'cookieConsent';
+        banner.className = 'cookie-consent';
+        banner.innerHTML = `
+            <div class="cookie-content">
+                <p data-i18n="cookieMessage">We use cookies to enhance your experience. By continuing to use this site, you agree to our use of cookies.</p>
+                <div class="cookie-actions">
+                    <button class="cookie-btn accept" onclick="Components.acceptCookies()">Accept</button>
+                    <button class="cookie-btn decline" onclick="Components.declineCookies()">Decline</button>
+                </div>
+            </div>
+        `;
+        document.body.appendChild(banner);
+        
+        setTimeout(() => banner.classList.add('show'), 1000);
+    },
+
+    acceptCookies() {
+        localStorage.setItem('cookieConsent', 'accepted');
+        this.hideCookieBanner();
+    },
+
+    declineCookies() {
+        localStorage.setItem('cookieConsent', 'declined');
+        this.hideCookieBanner();
+    },
+
+    hideCookieBanner() {
+        const banner = document.getElementById('cookieConsent');
+        if (banner) {
+            banner.classList.remove('show');
+            setTimeout(() => banner.remove(), 300);
+        }
     }
 };
 

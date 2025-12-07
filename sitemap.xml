@@ -1,52 +1,136 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
-<!-- created with Free Online Sitemap Generator www.xml-sitemaps.com -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
-
+<!-- Main Pages -->
 <url>
-  <loc>https://www.pictrikit.com/</loc>
-  <lastmod>2025-12-05T09:42:55+00:00</lastmod>
+  <loc>https://pictrikit.com/</loc>
+  <xhtml:link rel="alternate" hreflang="en" href="https://pictrikit.com/en/"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://pictrikit.com/zh/"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://pictrikit.com/ja/"/>
+  <xhtml:link rel="alternate" hreflang="ko" href="https://pictrikit.com/ko/"/>
+  <xhtml:link rel="alternate" hreflang="x-default" href="https://pictrikit.com/"/>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>weekly</changefreq>
   <priority>1.00</priority>
 </url>
+
+<!-- Language Versions -->
 <url>
-  <loc>https://www.pictrikit.com/features</loc>
-  <lastmod>2025-12-05T09:42:55+00:00</lastmod>
-  <priority>0.80</priority>
+  <loc>https://pictrikit.com/en/</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
 </url>
 <url>
-  <loc>https://www.pictrikit.com/tutorial</loc>
-  <lastmod>2025-12-05T09:42:55+00:00</lastmod>
-  <priority>0.80</priority>
+  <loc>https://pictrikit.com/zh/</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
 </url>
 <url>
-  <loc>https://www.pictrikit.com/faq</loc>
-  <lastmod>2025-12-05T09:42:56+00:00</lastmod>
-  <priority>0.80</priority>
+  <loc>https://pictrikit.com/ja/</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
 </url>
 <url>
-  <loc>https://www.pictrikit.com/contact</loc>
-  <lastmod>2025-12-05T09:42:56+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://www.pictrikit.com/app</loc>
-  <lastmod>2025-12-05T09:42:56+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://www.pictrikit.com/privacy</loc>
-  <lastmod>2025-12-05T09:42:56+00:00</lastmod>
-  <priority>0.80</priority>
-</url>
-<url>
-  <loc>https://www.pictrikit.com/about</loc>
-  <lastmod>2025-12-05T09:42:56+00:00</lastmod>
-  <priority>0.64</priority>
+  <loc>https://pictrikit.com/ko/</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
 </url>
 
+<!-- App -->
+<url>
+  <loc>https://pictrikit.com/app.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.90</priority>
+</url>
+
+<!-- Features -->
+<url>
+  <loc>https://pictrikit.com/features.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.80</priority>
+</url>
+
+<!-- Tutorial -->
+<url>
+  <loc>https://pictrikit.com/tutorial.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.80</priority>
+</url>
+
+<!-- FAQ -->
+<url>
+  <loc>https://pictrikit.com/faq.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.80</priority>
+</url>
+
+<!-- Contact -->
+<url>
+  <loc>https://pictrikit.com/contact.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.70</priority>
+</url>
+
+<!-- About -->
+<url>
+  <loc>https://pictrikit.com/about.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.60</priority>
+</url>
+
+<!-- Privacy -->
+<url>
+  <loc>https://pictrikit.com/privacy.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.50</priority>
+</url>
+
+<!-- Terms -->
+<url>
+  <loc>https://pictrikit.com/terms.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>yearly</changefreq>
+  <priority>0.50</priority>
+</url>
+
+<!-- Search -->
+<url>
+  <loc>https://pictrikit.com/search.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.60</priority>
+</url>
+
+<!-- Blog -->
+<url>
+  <loc>https://pictrikit.com/blog/</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.70</priority>
+</url>
+<url>
+  <loc>https://pictrikit.com/blog/ui-design-ai.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.65</priority>
+</url>
+<url>
+  <loc>https://pictrikit.com/blog/replace-tools.html</loc>
+  <lastmod>2024-12-06</lastmod>
+  <changefreq>monthly</changefreq>
+  <priority>0.65</priority>
+</url>
 
 </urlset>
