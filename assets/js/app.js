@@ -97,7 +97,7 @@
             const icon = currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
             document.querySelector('#themeToggle i').className = icon;
             
-            canvas.backgroundColor = currentTheme === 'light' ? '#ffffff' : '#000000';
+            canvas.backgroundColor = currentTheme === 'light' ? '#ffffff' : '#1f1f1f';
             canvas.renderAll();
             localStorage.setItem('theme', currentTheme);
         }
@@ -107,6 +107,12 @@
             document.documentElement.setAttribute('data-theme', currentTheme);
             const icon = currentTheme === 'light' ? 'fas fa-moon' : 'fas fa-sun';
             document.querySelector('#themeToggle i').className = icon;
+            
+            // Set canvas background based on theme
+            if (canvas) {
+                canvas.backgroundColor = currentTheme === 'light' ? '#ffffff' : '#1f1f1f';
+                canvas.renderAll();
+            }
         }
 
         function initColorPickers() {
@@ -1465,7 +1471,7 @@
         function clearAll() {
             if (canvas.getObjects().length && confirm('Clear canvas?')) {
                 canvas.clear();
-                canvas.backgroundColor = currentTheme === 'light' ? '#ffffff' : '#000000';
+                canvas.backgroundColor = currentTheme === 'light' ? '#ffffff' : '#1f1f1f';
                 canvas.renderAll();
                 history = [];
                 historyStep = -1;
