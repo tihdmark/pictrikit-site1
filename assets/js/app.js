@@ -1239,21 +1239,8 @@
                 }
             }
             
-            // 只限制左侧和顶部边界，右侧和底部不限制
+            // 移除所有边界限制，允许对象在画布任意位置移动
             obj.setCoords();
-            const finalBounds = obj.getBoundingRect(false);
-            
-            // 限制左边界
-            if (finalBounds.left < 0) {
-                obj.set('left', obj.left - finalBounds.left);
-                obj.setCoords();
-            }
-            // 限制顶部边界
-            if (finalBounds.top < 0) {
-                obj.set('top', obj.top - finalBounds.top);
-                obj.setCoords();
-            }
-            // 右侧和底部不限制，可以无限拖动
         });
 
         canvas.on('object:rotating', (e) => {
@@ -1605,26 +1592,90 @@
             }
         }
 
-        // Center selected object or all objects
+        // Center selected object or reset view to home position with smooth animation
         function centerSelected() {
             const activeObj = canvas.getActiveObject();
             if (activeObj) {
-                // Center the selected object
-                activeObj.center();
-                canvas.renderAll();
-                saveState();
-                showToast('⊙ Centered');
+                // Center the selected object in viewport with smooth animation
+                const objCenter = activeObj.getCenterPoint();
+                const viewportCenter = {
+                    x: canvasWidth / 2,
+                    y: canvasHeight / 2
+                };
+                
+                // Calculate the offset needed
+                const vpt = canvas.viewportTransform;
+                const currentZoom = canvas.getZoom();
+                const targetX = viewportCenter.x - objCenter.x * currentZoom;
+                const targetY = viewportCenter.y - objCenter.y * currentZoom;
+                
+                // Animate viewport transform
+                animateViewport(vpt[4], vpt[5], targetX, targetY, 300);
+                showToast('⊙ Centered in view');
             } else if (canvas.getObjects().length > 0) {
-                // Center all objects as a group
-                const group = new fabric.ActiveSelection(canvas.getObjects(), {
-                    canvas: canvas
-                });
-                group.center();
-                canvas.discardActiveObject();
-                canvas.renderAll();
-                saveState();
-                showToast('⊙ All centered');
+                // Reset view to home position (0,0) with zoom reset and smooth animation
+                const vpt = canvas.viewportTransform;
+                const currentZoom = canvas.getZoom();
+                
+                // Animate back to origin
+                animateViewportWithZoom(vpt[4], vpt[5], currentZoom, 0, 0, 1, 400);
+                showToast('⊙ View reset to home');
             }
+        }
+        
+        // Smooth viewport animation
+        function animateViewport(startX, startY, endX, endY, duration) {
+            const startTime = Date.now();
+            const vpt = canvas.viewportTransform;
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function (ease-out-cubic)
+                const eased = 1 - Math.pow(1 - progress, 3);
+                
+                vpt[4] = startX + (endX - startX) * eased;
+                vpt[5] = startY + (endY - startY) * eased;
+                
+                canvas.requestRenderAll();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            animate();
+        }
+        
+        // Smooth viewport animation with zoom
+        function animateViewportWithZoom(startX, startY, startZoom, endX, endY, endZoom, duration) {
+            const startTime = Date.now();
+            const vpt = canvas.viewportTransform;
+            
+            function animate() {
+                const elapsed = Date.now() - startTime;
+                const progress = Math.min(elapsed / duration, 1);
+                
+                // Easing function (ease-out-cubic)
+                const eased = 1 - Math.pow(1 - progress, 3);
+                
+                vpt[4] = startX + (endX - startX) * eased;
+                vpt[5] = startY + (endY - startY) * eased;
+                
+                const newZoom = startZoom + (endZoom - startZoom) * eased;
+                canvas.setZoom(newZoom);
+                currentZoom = newZoom;
+                document.getElementById('zoomLevel').textContent = Math.round(newZoom * 100) + '%';
+                
+                canvas.requestRenderAll();
+                
+                if (progress < 1) {
+                    requestAnimationFrame(animate);
+                }
+            }
+            
+            animate();
         }
 
         document.addEventListener('keydown', (e) => {
