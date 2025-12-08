@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Changelog - PictriKit</title>
+    <meta name="description" content="PictriKit update history and version changelog">
+    <link rel="canonical" href="https://pictrikit.com/changelog.html">
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <link rel="stylesheet" href="/assets/css/pages.css">
+    <style>
+        .changelog-container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+        .version-block {
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            padding: 24px;
+            margin-bottom: 24px;
+            border-left: 4px solid var(--accent-color);
+        }
+        .version-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .version-number {
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--accent-color);
+        }
+        .version-date {
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .change-category {
+            margin-top: 16px;
+        }
+        .category-title {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .change-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        .change-item {
+            padding: 8px 0;
+            padding-left: 24px;
+            position: relative;
+            color: var(--text-primary);
+        }
+        .change-item:before {
+            content: "•";
+            position: absolute;
+            left: 8px;
+            color: var(--accent-color);
+        }
+        .badge {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 11px;
+            font-weight: 600;
+            text-transform: uppercase;
+        }
+        .badge-new { background: #10b981; color: white; }
+        .badge-fix { background: #ef4444; color: white; }
+        .badge-improve { background: #3b82f6; color: white; }
+    </style>
+</head>
+<body data-page="changelog">
+    <div class="page-header">
+        <div class="container">
+            <a href="/index.html" class="back-link">
+                <i class="fas fa-arrow-left"></i> Back to Home
+            </a>
+            <h1><i class="fas fa-clock-rotate-left"></i> Changelog</h1>
+            <p class="page-subtitle">Version history and updates</p>
+        </div>
+    </div>
+
+    <div class="changelog-container">
+        <!-- Version 1.2.0 -->
+        <div class="version-block">
+            <div class="version-header">
+                <span class="version-number">v1.2.0</span>
+                <span class="version-date">December 8, 2024</span>
+            </div>
+            
+            <div class="change-category">
+                <div class="category-title">
+                    <i class="fas fa-sparkles"></i> New Features
+                </div>
+                <ul class="change-list">
+                    <li class="change-item">Layer order management with lock functionality</li>
+                    <li class="change-item">Center/Reset button to find lost objects (Keyboard: C)</li>
+                    <li class="change-item">Icon size control (20-200px) with persistent settings</li>
+                    <li class="change-item">Improved icon grid (10 columns, 450px height)</li>
+                    <li class="change-item">Multi-language support for all new features</li>
+                </ul>
+            </div>
+
+            <div class="change-category">
+                <div class="category-title">
+                    <i class="fas fa-wrench"></i> Improvements
+                </div>
+                <ul class="change-list">
+                    <li class="change-item">Dark mode canvas background now properly switches</li>
+                    <li class="change-item">Better tool organization in sidebar</li>
+                    <li class="change-item">Layer lock prevents reordering (not movement)</li>
+                    <li class="change-item">Icon color and size settings remembered</li>
+                </ul>
+            </div>
+
+            <div class="change-category">
+                <div class="category-title">
+                    <i class="fas fa-bug"></i> Bug Fixes
+                </div>
+                <ul class="change-list">
+                    <li class="change-item">Fixed layer lock/unlock functionality</li>
+                    <li class="change-item">Fixed theme switching canvas color</li>
+                    <li class="change-item">Fixed image upload and paste functionality</li>
+                    <li class="change-item">Fixed favicon display issues</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Version 1.1.0 -->
+        <div class="version-block">
+            <div class="version-header">
+                <span class="version-number">v1.1.0</span>
+                <span class="version-date">December 7, 2024</span>
+            </div>
+            
+            <div class="change-category">
+                <div class="category-title">
+                    <i class="fas fa-sparkles"></i> New Features
+                </div>
+                <ul class="change-list">
+                    <li class="change-item">Dark mode support with theme toggle</li>
+                    <li class="change-item">Multi-language interface (EN, CN, JP, KR)</li>
+                    <li class="change-item">Design icons library with Font Awesome</li>
+                    <li class="change-item">Cookie consent banner (GDPR compliant)</li>
+                </ul>
+            </div>
+
+            <div class="change-category">
+                <div class="category-title">
+                    <i class="fas fa-rocket"></i> Performance
+                </div>
+                <ul class="change-list">
+                    <li class="change-item">70% faster First Contentful Paint (5.3s → 1.6s)</li>
+                    <li class="change-item">Optimized CSS and JavaScript loading</li>
+                    <li class="change-item">Added resource preconnect hints</li>
+                </ul>
+            </div>
+
+            <div class="change-category">
+                <div class="category-title">
+                    <i class="fas fa-search"></i> SEO
+                </div>
+                <ul class="change-list">
+                    <li class="change-item">Hreflang tags for international SEO</li>
+                    <li class="change-item">Schema.org structured data</li>
+                    <li class="change-item">Improved meta descriptions and keywords</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Version 1.0.0 -->
+        <div class="version-block">
+            <div class="version-header">
+                <span class="version-number">v1.0.0</span>
+                <span class="version-date">November 2024</span>
+            </div>
+            
+            <div class="change-category">
+                <div class="category-title">
+                    <i class="fas fa-rocket"></i> Initial Release
+                </div>
+                <ul class="change-list">
+                    <li class="change-item">Screenshot stitching and combining</li>
+                    <li class="change-item">Smart alignment and snapping</li>
+                    <li class="change-item">Crop, blur, and pixelate tools</li>
+                    <li class="change-item">Drawing and annotation tools</li>
+                    <li class="change-item">Text labels with customization</li>
+                    <li class="change-item">Shapes (rectangles, circles, lines, arrows)</li>
+                    <li class="change-item">Background customization</li>
+                    <li class="change-item">Export as PNG, JPG, PDF</li>
+                    <li class="change-item">Undo/Redo support (50 steps)</li>
+                    <li class="change-item">100% free, no watermarks</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script src="/assets/js/i18n.js"></script>
+    <script src="/assets/js/components.js"></script>
+</body>
+</html>
