@@ -316,6 +316,42 @@
             document.querySelectorAll('.drawer-content').forEach(d => d.classList.remove('show'));
             closeMobileMenu();
         }
+        
+        // Settings modal toggle function
+        function openSettingsModal(type) {
+            const drawers = {
+                'background': 'bgDrawer',
+                'shape': 'shapeDrawer',
+                'draw': 'drawDrawer',
+                'text': 'textDrawer',
+                'layer': 'layerDrawer'
+            };
+            
+            const drawerId = drawers[type];
+            if (!drawerId) return;
+            
+            const drawer = document.getElementById(drawerId);
+            if (!drawer) return;
+            
+            // Toggle the drawer
+            const isOpen = drawer.classList.contains('show');
+            
+            // Close all drawers first
+            Object.values(drawers).forEach(id => {
+                const d = document.getElementById(id);
+                if (d) d.classList.remove('show');
+            });
+            
+            // Open the clicked drawer if it was closed
+            if (!isOpen) {
+                drawer.classList.add('show');
+            }
+        }
+        
+        // Close settings modal
+        function closeSettingsModal() {
+            closeAllDrawers();
+        }
 
         function setBgTransparent() {
             canvas.backgroundColor = null;
@@ -507,11 +543,13 @@
         }
         
         function openShapeDrawer() {
-            openSettingsModal('shape');
+            // 打开形状抽屉
+            toggleDrawer('shape');
         }
         
         function openDrawDrawer() {
-            openSettingsModal('draw');
+            // 打开画笔抽屉
+            toggleDrawer('draw');
         }
 
         function updateTextFont(v) {
