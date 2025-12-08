@@ -1573,7 +1573,38 @@
             }
         }
 
+        // Center selected object or all objects
+        function centerSelected() {
+            const activeObj = canvas.getActiveObject();
+            if (activeObj) {
+                // Center the selected object
+                activeObj.center();
+                canvas.renderAll();
+                saveState();
+                showToast('⊙ Centered');
+            } else if (canvas.getObjects().length > 0) {
+                // Center all objects as a group
+                const group = new fabric.ActiveSelection(canvas.getObjects(), {
+                    canvas: canvas
+                });
+                group.center();
+                canvas.discardActiveObject();
+                canvas.renderAll();
+                saveState();
+                showToast('⊙ All centered');
+            }
+        }
+
         document.addEventListener('keydown', (e) => {
+            // C key - Center selected object
+            if (e.key === 'c' || e.key === 'C') {
+                const activeObj = canvas.getActiveObject();
+                if (activeObj && !activeObj.isEditing) {
+                    centerSelected();
+                    e.preventDefault();
+                    return;
+                }
+            }
             // 空格键按下 - 启用画板拖动模式
             if (e.code === 'Space' && !isSpacePressed) {
                 // 检查是否正在编辑文本，如果是则不启用拖动
@@ -1917,6 +1948,10 @@
             const socialIcons = iconCategories.social || [];
             const isBrandIcon = socialIcons.includes(iconName);
             
+            // Get icon size from slider
+            const sizeSlider = document.getElementById('iconSizeSlider');
+            const iconSize = sizeSlider ? parseInt(sizeSlider.value) : 60;
+            
             const text = new fabric.Text(iconUnicode, {
                 left: canvasWidth / 2,
                 top: canvasHeight / 2,
@@ -1924,7 +1959,7 @@
                 originY: 'center',
                 fontFamily: isBrandIcon ? 'Font Awesome 6 Brands' : 'Font Awesome 6 Free',
                 fontWeight: isBrandIcon ? 400 : 900,
-                fontSize: 80,
+                fontSize: iconSize,
                 fill: currentIconColor,
                 cornerColor: '#0066cc',
                 cornerStyle: 'circle',
