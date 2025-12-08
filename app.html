@@ -819,6 +819,37 @@
             }
         }
         
+        // Settings drawer toggle function
+        function openSettingsModal(type) {
+            const drawers = {
+                'background': 'bgDrawer',
+                'shape': 'shapeDrawer',
+                'draw': 'drawDrawer',
+                'text': 'textDrawer',
+                'layer': 'layerDrawer'
+            };
+            
+            const drawerId = drawers[type];
+            if (!drawerId) return;
+            
+            const drawer = document.getElementById(drawerId);
+            if (!drawer) return;
+            
+            // Toggle the drawer
+            const isOpen = drawer.classList.contains('show');
+            
+            // Close all drawers first
+            Object.values(drawers).forEach(id => {
+                const d = document.getElementById(id);
+                if (d) d.classList.remove('show');
+            });
+            
+            // Open the clicked drawer if it was closed
+            if (!isOpen) {
+                drawer.classList.add('show');
+            }
+        }
+        
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             const langSelector = document.getElementById('langSelector');
