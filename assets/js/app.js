@@ -1432,37 +1432,62 @@
         function toggleLock() {
             const o = canvas.getActiveObject();
             if (o) {
-                // Check current lock state
-                const isCurrentlyLocked = o.lockMovementX || false;
-                const newLockState = !isCurrentlyLocked;
-                
-                // Set lock properties but keep object selectable
-                o.set({
-                    lockMovementX: newLockState,
-                    lockMovementY: newLockState,
-                    lockRotation: newLockState,
-                    lockScalingX: newLockState,
-                    lockScalingY: newLockState,
-                    hasControls: !newLockState,
-                    hasBorders: true,  // Always show borders so user can see it's selected
-                    selectable: true,  // Keep selectable so user can unlock it
-                    evented: true      // Keep evented so it responds to clicks
-                });
+                // Toggle layer order lock (prevent layer reordering)
+                const isLayerLocked = o.layerLocked || false;
+                o.layerLocked = !isLayerLocked;
                 
                 // Update lock button icon
                 const lockBtn = document.getElementById('lockBtn');
                 if (lockBtn) {
                     const icon = lockBtn.querySelector('i');
                     if (icon) {
-                        icon.className = newLockState ? 'fas fa-lock' : 'fas fa-lock-open';
+                        icon.className = o.layerLocked ? 'fas fa-lock' : 'fas fa-lock-open';
                     }
                 }
                 
                 canvas.renderAll();
                 saveState();
-                showToast(newLockState ? '🔒 Locked (position fixed)' : '🔓 Unlocked');
+                showToast(o.layerLocked ? '🔒 Layer order locked' : '🔓 Layer order unlocked');
             }
         }
+
+        // Override layer movement functions to respect lock
+        const originalBringToFront = canvas.bringToFront;
+        const originalBringForward = canvas.bringForward;
+        const originalSendBackwards = canvas.sendBackwards;
+        const originalSendToBack = canvas.sendToBack;
+
+        canvas.bringToFront = function(obj) {
+            if (obj && obj.layerLocked) {
+                showToast('⚠️ Layer order is locked');
+                return;
+            }
+            return originalBringToFront.call(this, obj);
+        };
+
+        canvas.bringForward = function(obj) {
+            if (obj && obj.layerLocked) {
+                showToast('⚠️ Layer order is locked');
+                return;
+            }
+            return originalBringForward.call(this, obj);
+        };
+
+        canvas.sendBackwards = function(obj) {
+            if (obj && obj.layerLocked) {
+                showToast('⚠️ Layer order is locked');
+                return;
+            }
+            return originalSendBackwards.call(this, obj);
+        };
+
+        canvas.sendToBack = function(obj) {
+            if (obj && obj.layerLocked) {
+                showToast('⚠️ Layer order is locked');
+                return;
+            }
+            return originalSendToBack.call(this, obj);
+        };
 
         // Update lock button when selection changes
         canvas.on('selection:created', updateLockButton);
@@ -1481,7 +1506,7 @@
             if (o && lockBtn) {
                 const icon = lockBtn.querySelector('i');
                 if (icon) {
-                    const isLocked = o.lockMovementX || false;
+                    const isLocked = o.layerLocked || false;
                     icon.className = isLocked ? 'fas fa-lock' : 'fas fa-lock-open';
                 }
             }
