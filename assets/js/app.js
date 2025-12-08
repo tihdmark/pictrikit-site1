@@ -1136,21 +1136,7 @@
                 let snapX = null, snapY = null;
                 let minDistX = Infinity, minDistY = Infinity;
                 
-                // 只对齐画板的左侧和顶部边界（使用画布坐标）
-                const leftDist = objBounds.left;
-                const topDist = objBounds.top;
-                
-                // 左边界对齐
-                if (leftDist < SNAP_THRESHOLD && leftDist < minDistX) {
-                    snapX = { delta: -leftDist, line: 0, label: 'Left' };
-                    minDistX = leftDist;
-                }
-                // 顶部边界对齐
-                if (topDist < SNAP_THRESHOLD && topDist < minDistY) {
-                    snapY = { delta: -topDist, line: 0, label: 'Top' };
-                    minDistY = topDist;
-                }
-                
+                // 移除画布边界对齐，只保留对象之间的对齐
                 // 与其他对象对齐（使用画布坐标）
                 canvas.getObjects().forEach(other => {
                     if (other === obj || other.type.includes('text')) return;
