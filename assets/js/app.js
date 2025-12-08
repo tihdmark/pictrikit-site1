@@ -1432,15 +1432,20 @@
         function toggleLock() {
             const o = canvas.getActiveObject();
             if (o) {
-                const isLocked = !o.selectable;
+                // Check current lock state
+                const isCurrentlyLocked = o.lockMovementX || false;
+                const newLockState = !isCurrentlyLocked;
+                
                 o.set({
-                    selectable: isLocked,
-                    evented: isLocked,
-                    lockMovementX: !isLocked,
-                    lockMovementY: !isLocked,
-                    lockRotation: !isLocked,
-                    lockScalingX: !isLocked,
-                    lockScalingY: !isLocked
+                    selectable: !newLockState,
+                    evented: !newLockState,
+                    lockMovementX: newLockState,
+                    lockMovementY: newLockState,
+                    lockRotation: newLockState,
+                    lockScalingX: newLockState,
+                    lockScalingY: newLockState,
+                    hasControls: !newLockState,
+                    hasBorders: !newLockState
                 });
                 
                 // Update lock button icon
@@ -1448,13 +1453,18 @@
                 if (lockBtn) {
                     const icon = lockBtn.querySelector('i');
                     if (icon) {
-                        icon.className = isLocked ? 'fas fa-lock-open' : 'fas fa-lock';
+                        icon.className = newLockState ? 'fas fa-lock' : 'fas fa-lock-open';
                     }
+                }
+                
+                // Deselect if locked
+                if (newLockState) {
+                    canvas.discardActiveObject();
                 }
                 
                 canvas.renderAll();
                 saveState();
-                showToast(isLocked ? '🔓 Unlocked' : '🔒 Locked');
+                showToast(newLockState ? '🔒 Locked' : '🔓 Unlocked');
             }
         }
 
@@ -1475,7 +1485,8 @@
             if (o && lockBtn) {
                 const icon = lockBtn.querySelector('i');
                 if (icon) {
-                    icon.className = o.selectable ? 'fas fa-lock-open' : 'fas fa-lock';
+                    const isLocked = o.lockMovementX || false;
+                    icon.className = isLocked ? 'fas fa-lock' : 'fas fa-lock-open';
                 }
             }
         }

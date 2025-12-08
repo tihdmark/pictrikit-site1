@@ -256,6 +256,13 @@
                         </button>
                     </div>
                     
+                    <!-- 复位操作组 -->
+                    <div class="tool-group">
+                        <button class="tool-btn" onclick="centerSelected()" aria-label="Center selected" data-tooltip="Center (C)">
+                            <i class="fas fa-crosshairs" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    
                     <!-- 绘图和标注工具组 -->
                     <div class="tool-group">
                         <button class="tool-btn" id="drawToggle" onclick="toggleDraw()" aria-label="Toggle draw mode" aria-pressed="false" data-tooltip="Draw">
@@ -308,13 +315,6 @@
                         </button>
                         <button class="tool-btn" onclick="clearAll()" aria-label="Clear all" data-tooltip="Clear">
                             <i class="fas fa-broom" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                    
-                    <!-- 复位操作组 -->
-                    <div class="tool-group">
-                        <button class="tool-btn" onclick="centerSelected()" aria-label="Center selected" data-tooltip="Center (C)">
-                            <i class="fas fa-crosshairs" aria-hidden="true"></i>
                         </button>
                     </div>
                 </div>
@@ -832,6 +832,12 @@
                 if (iconEl) {
                     iconEl.className = icon;
                 }
+            }
+            
+            // Update canvas background color
+            if (typeof canvas !== 'undefined' && canvas) {
+                canvas.backgroundColor = newTheme === 'light' ? '#ffffff' : '#1f1f1f';
+                canvas.renderAll();
             }
         }
         
