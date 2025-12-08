@@ -1436,16 +1436,17 @@
                 const isCurrentlyLocked = o.lockMovementX || false;
                 const newLockState = !isCurrentlyLocked;
                 
+                // Set lock properties but keep object selectable
                 o.set({
-                    selectable: !newLockState,
-                    evented: !newLockState,
                     lockMovementX: newLockState,
                     lockMovementY: newLockState,
                     lockRotation: newLockState,
                     lockScalingX: newLockState,
                     lockScalingY: newLockState,
                     hasControls: !newLockState,
-                    hasBorders: !newLockState
+                    hasBorders: true,  // Always show borders so user can see it's selected
+                    selectable: true,  // Keep selectable so user can unlock it
+                    evented: true      // Keep evented so it responds to clicks
                 });
                 
                 // Update lock button icon
@@ -1457,14 +1458,9 @@
                     }
                 }
                 
-                // Deselect if locked
-                if (newLockState) {
-                    canvas.discardActiveObject();
-                }
-                
                 canvas.renderAll();
                 saveState();
-                showToast(newLockState ? '🔒 Locked' : '🔓 Unlocked');
+                showToast(newLockState ? '🔒 Locked (position fixed)' : '🔓 Unlocked');
             }
         }
 
