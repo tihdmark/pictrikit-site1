@@ -1388,6 +1388,98 @@
             if (o) { o.set('flipY', !o.flipY); canvas.renderAll(); saveState(); }
         }
 
+        // Layer management functions
+        function bringToFront() {
+            const o = canvas.getActiveObject();
+            if (o) {
+                canvas.bringToFront(o);
+                canvas.renderAll();
+                saveState();
+                showToast('↑ Brought to front');
+            }
+        }
+
+        function bringForward() {
+            const o = canvas.getActiveObject();
+            if (o) {
+                canvas.bringForward(o);
+                canvas.renderAll();
+                saveState();
+                showToast('↑ Moved forward');
+            }
+        }
+
+        function sendBackward() {
+            const o = canvas.getActiveObject();
+            if (o) {
+                canvas.sendBackwards(o);
+                canvas.renderAll();
+                saveState();
+                showToast('↓ Moved backward');
+            }
+        }
+
+        function sendToBack() {
+            const o = canvas.getActiveObject();
+            if (o) {
+                canvas.sendToBack(o);
+                canvas.renderAll();
+                saveState();
+                showToast('↓ Sent to back');
+            }
+        }
+
+        function toggleLock() {
+            const o = canvas.getActiveObject();
+            if (o) {
+                const isLocked = !o.selectable;
+                o.set({
+                    selectable: isLocked,
+                    evented: isLocked,
+                    lockMovementX: !isLocked,
+                    lockMovementY: !isLocked,
+                    lockRotation: !isLocked,
+                    lockScalingX: !isLocked,
+                    lockScalingY: !isLocked
+                });
+                
+                // Update lock button icon
+                const lockBtn = document.getElementById('lockBtn');
+                if (lockBtn) {
+                    const icon = lockBtn.querySelector('i');
+                    if (icon) {
+                        icon.className = isLocked ? 'fas fa-lock-open' : 'fas fa-lock';
+                    }
+                }
+                
+                canvas.renderAll();
+                saveState();
+                showToast(isLocked ? '🔓 Unlocked' : '🔒 Locked');
+            }
+        }
+
+        // Update lock button when selection changes
+        canvas.on('selection:created', updateLockButton);
+        canvas.on('selection:updated', updateLockButton);
+        canvas.on('selection:cleared', () => {
+            const lockBtn = document.getElementById('lockBtn');
+            if (lockBtn) {
+                const icon = lockBtn.querySelector('i');
+                if (icon) icon.className = 'fas fa-lock-open';
+            }
+        });
+
+        function updateLockButton() {
+            const o = canvas.getActiveObject();
+            const lockBtn = document.getElementById('lockBtn');
+            if (o && lockBtn) {
+                const icon = lockBtn.querySelector('i');
+                if (icon) {
+                    icon.className = o.selectable ? 'fas fa-lock-open' : 'fas fa-lock';
+                }
+            }
+        }
+
         function saveState() {
             if (historyStep < history.length - 1) history = history.slice(0, historyStep + 1);
             history.push(JSON.stringify(canvas.toJSON()));

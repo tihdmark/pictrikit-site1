@@ -544,6 +544,44 @@
                         </div>
                     </div>
                 </div>
+
+                <div class="panel-section">
+                    <button class="drawer-trigger" id="layerDrawerTrigger" onclick="openSettingsModal('layer')">
+                        <span><i class="fas fa-layer-group"></i> <span data-i18n="layerSettings">Layer Order</span></span>
+                        <i class="fas fa-chevron-right"></i>
+                    </button>
+                    
+                    <div class="drawer-content" id="layerDrawer">
+                        <div class="drawer-inner">
+                            <div class="settings-group">
+                                <label class="settings-label">Layer Control</label>
+                                <div class="icon-btn-group">
+                                    <button class="icon-btn" onclick="bringToFront()" title="Bring to Front">
+                                        <i class="fas fa-arrow-up"></i>
+                                    </button>
+                                    <button class="icon-btn" onclick="bringForward()" title="Bring Forward">
+                                        <i class="fas fa-chevron-up"></i>
+                                    </button>
+                                    <button class="icon-btn" onclick="sendBackward()" title="Send Backward">
+                                        <i class="fas fa-chevron-down"></i>
+                                    </button>
+                                    <button class="icon-btn" onclick="sendToBack()" title="Send to Back">
+                                        <i class="fas fa-arrow-down"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="settings-group">
+                                <label class="settings-label">Lock Layer</label>
+                                <div class="icon-btn-group">
+                                    <button class="icon-btn" onclick="toggleLock()" title="Lock/Unlock" id="lockBtn">
+                                        <i class="fas fa-lock-open"></i>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
 
