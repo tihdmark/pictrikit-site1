@@ -695,6 +695,19 @@
     <div class="share-modal" id="shareModal" onclick="closeShareModal()">
         <div class="share-content" onclick="event.stopPropagation()">
             <h3 data-i18n="shareTitle">Share</h3>
+            <div class="share-option-group">
+                <div class="share-option-label" data-i18n="exportMode">Export Mode</div>
+                <div class="share-option-buttons">
+                    <button class="share-mode-btn active" id="shareModeFull" onclick="setShareMode('full')">
+                        <i class="fas fa-expand"></i>
+                        <span data-i18n="fullCanvas">Full Canvas</span>
+                    </button>
+                    <button class="share-mode-btn" id="shareModeSmart" onclick="setShareMode('smart')">
+                        <i class="fas fa-crop-simple"></i>
+                        <span data-i18n="smartCrop">Smart Crop</span>
+                    </button>
+                </div>
+            </div>
             <button onclick="copyToClipboard()">
                 <i class="fas fa-clipboard"></i>
                 <span data-i18n="copyClipboard">Copy to Clipboard</span>
@@ -708,6 +721,19 @@
     <div class="share-modal" id="downloadModal" onclick="closeDownloadModal()">
         <div class="share-content" onclick="event.stopPropagation()">
             <h3 data-i18n="downloadTitle">Download</h3>
+            <div class="share-option-group">
+                <div class="share-option-label" data-i18n="exportMode">Export Mode</div>
+                <div class="share-option-buttons">
+                    <button class="share-mode-btn active" id="downloadModeFull" onclick="setDownloadMode('full')">
+                        <i class="fas fa-expand"></i>
+                        <span data-i18n="fullCanvas">Full Canvas</span>
+                    </button>
+                    <button class="share-mode-btn" id="downloadModeSmart" onclick="setDownloadMode('smart')">
+                        <i class="fas fa-crop-simple"></i>
+                        <span data-i18n="smartCrop">Smart Crop</span>
+                    </button>
+                </div>
+            </div>
             <button onclick="downloadImage('png')">
                 <i class="fas fa-file-image"></i>
                 <span data-i18n="downloadPNG">Download PNG</span>

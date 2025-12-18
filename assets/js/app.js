@@ -19,6 +19,10 @@
         let lastPosX = 0;
         let lastPosY = 0;
         
+        // 导出模式：'full' 完整画布, 'smart' 智能裁剪
+        let shareExportMode = 'full';
+        let downloadExportMode = 'full';
+        
         // 裁剪工具相关变量
         let cropMode = false;
         let cropTarget = null;
@@ -210,11 +214,13 @@
                 drawPickr = Pickr.create({ 
                     ...drawConfig, 
                     el: '#drawColorPicker', 
-                    default: '#000000'
+                    default: savedBrushSettings.color
                 });
                 drawPickr.on('save', (c) => {
                     if (c) {
-                        canvas.freeDrawingBrush.color = c.toHEXA().toString();
+                        const colorStr = c.toHEXA().toString();
+                        savedBrushSettings.color = colorStr;
+                        canvas.freeDrawingBrush.color = colorStr;
                         closeAllDrawers();
                     }
                     drawPickr.hide();
@@ -225,11 +231,15 @@
                 drawPickrMobile = Pickr.create({ 
                     ...drawConfig, 
                     el: '#drawColorPickerMobile', 
-                    default: '#000000'
+                    default: savedBrushSettings.color
                 });
                 drawPickrMobile.on('save', (c) => {
                     if (c) {
-                        canvas.freeDrawingBrush.color = c.toHEXA().toString();
+                        const colorStr = c.toHEXA().toString();
+                        savedBrushSettings.color = colorStr;
+                        canvas.freeDrawingBrush.color = colorStr;
+                        // 同步桌面版颜色选择器
+                        if (drawPickr) drawPickr.setColor(colorStr);
                         closeAllDrawers();
                     }
                     drawPickrMobile.hide();
@@ -379,7 +389,9 @@
         const canvas = new fabric.Canvas('canvas', {
             backgroundColor: '#ffffff',
             preserveObjectStacking: true,
-            selection: true
+            selection: true,
+            perPixelTargetFind: true,  // 允许精确像素检测，可以选择被覆盖的元素
+            targetFindTolerance: 5     // 增加选择容差
         });
 
         canvas.wrapperEl.oncontextmenu = (e) => { e.preventDefault(); return false; };
@@ -391,12 +403,12 @@
         window.addEventListener('load', initColorPickers);
 
         function zoomIn() {
-            currentZoom = Math.min(currentZoom + 0.1, 3);
+            currentZoom = Math.min(currentZoom + 0.05, 3);
             applyZoom();
         }
 
         function zoomOut() {
-            currentZoom = Math.max(currentZoom - 0.1, 0.1);
+            currentZoom = Math.max(currentZoom - 0.05, 0.1);
             applyZoom();
         }
 
@@ -491,6 +503,9 @@
                 // 使用保存的画笔设置
                 canvas.freeDrawingBrush.color = savedBrushSettings.color;
                 canvas.freeDrawingBrush.width = savedBrushSettings.width;
+                // 同步颜色选择器显示
+                if (drawPickr) drawPickr.setColor(savedBrushSettings.color);
+                if (drawPickrMobile) drawPickrMobile.setColor(savedBrushSettings.color);
                 showToast('✓ Draw mode ON');
                 openDrawDrawer();
             } else {
@@ -1813,6 +1828,7 @@
                 canvas.forEachObject(function(obj) {
                     obj.set('evented', true);
                 });
+                canvas.renderAll();
             }
         });
         
@@ -1825,10 +1841,6 @@
                 canvas.hoverCursor = 'grabbing';
                 lastPosX = evt.clientX;
                 lastPosY = evt.clientY;
-                // 禁用所有对象的可选择性
-                canvas.forEachObject(function(obj) {
-                    obj.set('evented', false);
-                });
             }
         });
         
@@ -1852,15 +1864,42 @@
                 if (isSpacePressed) {
                     canvas.defaultCursor = 'grab';
                     canvas.hoverCursor = 'grab';
-                } else {
-                    // 如果空格键已释放，恢复对象可选择性
-                    canvas.forEachObject(function(obj) {
-                        obj.set('evented', true);
-                    });
                 }
             }
             clearGuides(); 
             if (rotationLabel) { rotationLabel.remove(); rotationLabel = null; }
+        });
+        
+        // 空格键 + 鼠标滚轮缩放画布
+        canvas.on('mouse:wheel', function(opt) {
+            if (isSpacePressed) {
+                opt.e.preventDefault();
+                opt.e.stopPropagation();
+                
+                const delta = opt.e.deltaY;
+                let zoom = canvas.getZoom();
+                
+                // 缩放步长 5%
+                if (delta < 0) {
+                    zoom = Math.min(zoom + 0.05, 3);
+                } else {
+                    zoom = Math.max(zoom - 0.05, 0.1);
+                }
+                
+                // 以鼠标位置为中心缩放
+                const pointer = canvas.getPointer(opt.e, true);
+                const point = new fabric.Point(pointer.x, pointer.y);
+                
+                canvas.zoomToPoint(point, zoom);
+                currentZoom = zoom;
+                document.getElementById('zoomLevel').textContent = Math.round(zoom * 100) + '%';
+                
+                // 显示缩放提示
+                const t = document.getElementById('zoomToast');
+                t.textContent = Math.round(zoom * 100) + '%';
+                t.classList.add('show');
+                setTimeout(() => t.classList.remove('show'), 800);
+            }
         });
 
         function setAsBackground() {
@@ -1898,19 +1937,35 @@
         function downloadPDF() {
             try {
                 const { jsPDF } = window.jspdf;
-                const imgData = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 2 });
                 
-                // 获取画布尺寸（像素）
-                const canvasWidthPx = canvas.width;
-                const canvasHeightPx = canvas.height;
+                let imgData, pdfWidth, pdfHeight;
+                
+                if (downloadExportMode === 'smart') {
+                    // 智能裁剪模式
+                    const bounds = getContentBounds();
+                    if (bounds) {
+                        imgData = getSmartCropDataURL('png', 1);
+                        pdfWidth = bounds.width;
+                        pdfHeight = bounds.height;
+                    } else {
+                        imgData = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 2 });
+                        pdfWidth = canvas.width;
+                        pdfHeight = canvas.height;
+                    }
+                } else {
+                    // 完整画布模式
+                    imgData = canvas.toDataURL({ format: 'png', quality: 1, multiplier: 2 });
+                    pdfWidth = canvas.width;
+                    pdfHeight = canvas.height;
+                }
                 
                 // 转换为毫米（假设 96 DPI）
                 const mmPerPx = 25.4 / 96;
-                const widthMm = canvasWidthPx * mmPerPx;
-                const heightMm = canvasHeightPx * mmPerPx;
+                const widthMm = pdfWidth * mmPerPx;
+                const heightMm = pdfHeight * mmPerPx;
                 
                 // 创建 PDF（横向或纵向取决于画布比例）
-                const orientation = canvasWidthPx > canvasHeightPx ? 'landscape' : 'portrait';
+                const orientation = pdfWidth > pdfHeight ? 'landscape' : 'portrait';
                 const pdf = new jsPDF({
                     orientation: orientation,
                     unit: 'mm',
@@ -1921,10 +1976,11 @@
                 pdf.addImage(imgData, 'PNG', 0, 0, widthMm, heightMm);
                 
                 // 下载 PDF
-                pdf.save('screenshot_' + Date.now() + '.pdf');
+                const filename = downloadExportMode === 'smart' ? 'screenshot_smart_' : 'screenshot_';
+                pdf.save(filename + Date.now() + '.pdf');
                 
                 closeDownloadModal();
-                showToast('✓ PDF saved');
+                showToast(downloadExportMode === 'smart' ? '✓ Smart PDF saved' : '✓ PDF saved');
             } catch (error) {
                 console.error('PDF export error:', error);
                 showToast('❌ PDF export failed');
@@ -2133,17 +2189,227 @@
             return unicodeMap[iconName] || '\uf005'; // 默认返回星星
         }
 
-        function copyToClipboard() {
-            canvas.getElement().toBlob((blob) => {
-                navigator.clipboard.write([new ClipboardItem({'image/png': blob})])
-                    .then(() => { showToast('✓ Copied'); closeShareModal(); })
-                    .catch(() => showToast('❌ Failed'));
+        // 设置分享导出模式
+        function setShareMode(mode) {
+            shareExportMode = mode;
+            document.getElementById('shareModeFull').classList.toggle('active', mode === 'full');
+            document.getElementById('shareModeSmart').classList.toggle('active', mode === 'smart');
+        }
+        
+        // 设置下载导出模式
+        function setDownloadMode(mode) {
+            downloadExportMode = mode;
+            document.getElementById('downloadModeFull').classList.toggle('active', mode === 'full');
+            document.getElementById('downloadModeSmart').classList.toggle('active', mode === 'smart');
+        }
+        
+        // 计算画布中有内容的边界区域（包括所有对象类型）
+        function getContentBounds() {
+            const objects = canvas.getObjects();
+            if (objects.length === 0) {
+                return null;
+            }
+            
+            let minX = Infinity, minY = Infinity;
+            let maxX = -Infinity, maxY = -Infinity;
+            
+            objects.forEach(obj => {
+                // 跳过辅助对象（如裁剪遮罩等）
+                if (obj.excludeFromExport) return;
+                
+                // 使用对象的 aCoords（绝对坐标）来计算边界
+                obj.setCoords();
+                const coords = obj.aCoords;
+                
+                if (coords) {
+                    // 获取四个角的坐标
+                    const points = [coords.tl, coords.tr, coords.br, coords.bl];
+                    
+                    points.forEach(point => {
+                        minX = Math.min(minX, point.x);
+                        minY = Math.min(minY, point.y);
+                        maxX = Math.max(maxX, point.x);
+                        maxY = Math.max(maxY, point.y);
+                    });
+                    
+                    // 对于有描边的对象，需要考虑描边宽度
+                    if (obj.stroke && obj.strokeWidth) {
+                        const strokeOffset = obj.strokeWidth / 2;
+                        minX -= strokeOffset;
+                        minY -= strokeOffset;
+                        maxX += strokeOffset;
+                        maxY += strokeOffset;
+                    }
+                }
             });
+            
+            // 检查是否找到有效边界
+            if (minX === Infinity || minY === Infinity || maxX === -Infinity || maxY === -Infinity) {
+                return null;
+            }
+            
+            // 添加边距（保留内容周围的空白空间）
+            const padding = 10;
+            minX = minX - padding;
+            minY = minY - padding;
+            maxX = maxX + padding;
+            maxY = maxY + padding;
+            
+            // 确保宽高至少为1像素
+            const width = Math.max(1, maxX - minX);
+            const height = Math.max(1, maxY - minY);
+            
+            return {
+                left: minX,
+                top: minY,
+                width: width,
+                height: height
+            };
+        }
+        
+        // 智能裁剪导出 - 使用临时画布方法
+        function getSmartCropDataURL(format = 'png', quality = 1) {
+            // 保存当前视口变换
+            const originalVpt = canvas.viewportTransform.slice();
+            
+            // 重置视口
+            canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+            canvas.renderAll();
+            
+            const bounds = getContentBounds();
+            if (!bounds) {
+                canvas.setViewportTransform(originalVpt);
+                canvas.renderAll();
+                return canvas.toDataURL({ format: format, quality: quality, multiplier: 2 });
+            }
+            
+            const multiplier = 2;
+            
+            // 创建临时画布，大小为内容边界
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = bounds.width * multiplier;
+            tempCanvas.height = bounds.height * multiplier;
+            const ctx = tempCanvas.getContext('2d');
+            
+            // 设置背景色
+            if (canvas.backgroundColor) {
+                ctx.fillStyle = canvas.backgroundColor;
+                ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            }
+            
+            // 设置变换：将内容移动到临时画布的原点
+            ctx.scale(multiplier, multiplier);
+            ctx.translate(-bounds.left, -bounds.top);
+            
+            // 遍历所有对象并绘制
+            const objects = canvas.getObjects();
+            objects.forEach(obj => {
+                if (obj.excludeFromExport) return;
+                obj.render(ctx);
+            });
+            
+            // 恢复视口
+            canvas.setViewportTransform(originalVpt);
+            canvas.renderAll();
+            
+            // 返回 dataURL
+            if (format === 'jpeg' || format === 'jpg') {
+                return tempCanvas.toDataURL('image/jpeg', quality);
+            }
+            return tempCanvas.toDataURL('image/png');
+        }
+        
+        // 智能裁剪导出为 Blob
+        function getSmartCropBlob(callback) {
+            // 保存当前视口变换
+            const originalVpt = canvas.viewportTransform.slice();
+            
+            // 重置视口
+            canvas.setViewportTransform([1, 0, 0, 1, 0, 0]);
+            canvas.renderAll();
+            
+            const bounds = getContentBounds();
+            
+            if (!bounds) {
+                canvas.setViewportTransform(originalVpt);
+                canvas.renderAll();
+                canvas.getElement().toBlob(callback);
+                return;
+            }
+            
+            const multiplier = 2;
+            
+            // 创建临时画布，大小为内容边界
+            const tempCanvas = document.createElement('canvas');
+            tempCanvas.width = bounds.width * multiplier;
+            tempCanvas.height = bounds.height * multiplier;
+            const ctx = tempCanvas.getContext('2d');
+            
+            // 设置背景色
+            if (canvas.backgroundColor) {
+                ctx.fillStyle = canvas.backgroundColor;
+                ctx.fillRect(0, 0, tempCanvas.width, tempCanvas.height);
+            }
+            
+            // 设置变换：将内容移动到临时画布的原点
+            ctx.scale(multiplier, multiplier);
+            ctx.translate(-bounds.left, -bounds.top);
+            
+            // 遍历所有对象并绘制
+            const objects = canvas.getObjects();
+            objects.forEach(obj => {
+                if (obj.excludeFromExport) return;
+                obj.render(ctx);
+            });
+            
+            // 恢复视口
+            canvas.setViewportTransform(originalVpt);
+            canvas.renderAll();
+            
+            // 返回 Blob
+            tempCanvas.toBlob(callback, 'image/png');
+        }
+
+        function copyToClipboard() {
+            if (shareExportMode === 'smart') {
+                getSmartCropBlob((blob) => {
+                    navigator.clipboard.write([new ClipboardItem({'image/png': blob})])
+                        .then(() => { showToast('✓ Smart copied'); closeShareModal(); })
+                        .catch(() => showToast('❌ Failed'));
+                });
+            } else {
+                canvas.getElement().toBlob((blob) => {
+                    navigator.clipboard.write([new ClipboardItem({'image/png': blob})])
+                        .then(() => { showToast('✓ Copied'); closeShareModal(); })
+                        .catch(() => showToast('❌ Failed'));
+                });
+            }
         }
 
         function downloadImage(format = 'png') {
-            saveImage(format);
+            if (downloadExportMode === 'smart') {
+                saveImageSmart(format);
+            } else {
+                saveImage(format);
+            }
             closeDownloadModal();
+        }
+        
+        // 智能裁剪保存图片
+        function saveImageSmart(format = 'png') {
+            const link = document.createElement('a');
+            const timestamp = Date.now();
+            
+            if (format === 'jpg' || format === 'jpeg') {
+                link.download = 'screenshot_smart_' + timestamp + '.jpg';
+                link.href = getSmartCropDataURL('jpeg', 0.9);
+            } else {
+                link.download = 'screenshot_smart_' + timestamp + '.png';
+                link.href = getSmartCropDataURL('png', 1);
+            }
+            
+            link.click();
+            showToast('✓ Smart saved');
         }
 
         function hideEmptyState() {

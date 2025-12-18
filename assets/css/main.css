@@ -1960,3 +1960,93 @@
     outline: 3px solid rgba(255, 255, 255, 0.5);
     outline-offset: 4px;
 }
+
+
+/* 分享/下载模态框选项组样式 */
+.share-option-group {
+    margin-bottom: 20px;
+    padding-bottom: 16px;
+    border-bottom: 1px solid var(--border-color);
+}
+
+.share-option-label {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 12px;
+}
+
+.share-option-buttons {
+    display: flex;
+    gap: 8px;
+}
+
+.share-mode-btn {
+    flex: 1;
+    padding: 12px 16px !important;
+    margin-bottom: 0 !important;
+    border: 2px solid var(--border-color) !important;
+    border-radius: 10px !important;
+    background: var(--bg-secondary) !important;
+    color: var(--text-primary) !important;
+    cursor: pointer;
+    font-size: 13px !important;
+    font-weight: 600;
+    transition: all 0.2s;
+    display: flex !important;
+    flex-direction: column;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 6px !important;
+}
+
+.share-mode-btn i {
+    font-size: 18px;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+
+.share-mode-btn span {
+    font-size: 11px;
+    color: var(--text-secondary);
+    transition: color 0.2s;
+}
+
+.share-mode-btn:hover {
+    border-color: var(--accent-color) !important;
+    background: var(--bg-primary) !important;
+}
+
+.share-mode-btn:hover i,
+.share-mode-btn:hover span {
+    color: var(--accent-color);
+}
+
+.share-mode-btn.active {
+    border-color: var(--accent-color) !important;
+    background: linear-gradient(135deg, rgba(102, 126, 234, 0.1), rgba(118, 75, 162, 0.1)) !important;
+}
+
+.share-mode-btn.active i {
+    color: var(--accent-color);
+}
+
+.share-mode-btn.active span {
+    color: var(--accent-color);
+}
+
+@media (max-width: 768px) {
+    .share-mode-btn {
+        padding: 10px 12px !important;
+    }
+    
+    .share-mode-btn i {
+        font-size: 16px;
+    }
+    
+    .share-mode-btn span {
+        font-size: 10px;
+    }
+}
