@@ -86,6 +86,14 @@
                     
                     <div class="feature-card">
                         <div class="feature-icon">
+                            <i class="fas fa-table-cells-large"></i>
+                        </div>
+                        <h3 data-i18n="featLayout">Layout Templates</h3>
+                        <p data-i18n="featLayoutDesc">Pre-built layout templates for common arrangements: side-by-side, grid, image with caption, and more. Drag images into containers for automatic sizing and positioning.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
                             <i class="fas fa-paintbrush"></i>
                         </div>
                         <h3 data-i18n="featDrawing">Drawing Tools</h3>
@@ -102,10 +110,66 @@
                     
                     <div class="feature-card">
                         <div class="feature-icon">
+                            <i class="fas fa-shapes"></i>
+                        </div>
+                        <h3 data-i18n="featShapes">Shape Tools</h3>
+                        <p data-i18n="featShapesDesc">Add rectangles, circles, lines, and arrows to highlight areas or create diagrams. Customize colors, stroke width, and fill options.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-comment"></i>
+                        </div>
+                        <h3 data-i18n="featBubble">Speech Bubbles</h3>
+                        <p data-i18n="featBubbleDesc">Add comic-style speech bubbles with editable text. Perfect for adding dialogue, comments, or callouts to your screenshots.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-icons"></i>
+                        </div>
+                        <h3 data-i18n="featIcons">Icon Library</h3>
+                        <p data-i18n="featIconsDesc">Access hundreds of design icons including arrows, checkmarks, warnings, and more. Search and filter by category to find the perfect icon.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
                             <i class="fas fa-crop-simple"></i>
                         </div>
                         <h3 data-i18n="featCropping">Image Cropping</h3>
                         <p data-i18n="featCroppingDesc">Crop and trim images to focus on important areas. Precise visual controls with real-time preview. Confirm or cancel with keyboard shortcuts (Enter/Escape).</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-droplet"></i>
+                        </div>
+                        <h3 data-i18n="featBlur">Blur Tool</h3>
+                        <p data-i18n="featBlurDesc">Blur sensitive information like names, emails, or personal data. Select an area and apply blur to protect privacy before sharing.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-th"></i>
+                        </div>
+                        <h3 data-i18n="featMosaic">Mosaic Tool</h3>
+                        <p data-i18n="featMosaicDesc">Pixelate areas to hide sensitive content with a mosaic effect. Adjustable block size for different levels of obscurity.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-object-group"></i>
+                        </div>
+                        <h3 data-i18n="featGroup">Group & Ungroup</h3>
+                        <p data-i18n="featGroupDesc">Group multiple objects together to move, resize, or rotate them as one unit. Ungroup to edit individual elements again.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-align-center"></i>
+                        </div>
+                        <h3 data-i18n="featAlignDistribute">Align & Distribute</h3>
+                        <p data-i18n="featAlignDistributeDesc">Align multiple objects to left, center, right, top, middle, or bottom. Distribute objects evenly with equal spacing.</p>
                     </div>
                     
                     <div class="feature-card">
@@ -168,6 +232,31 @@
                     <li><strong>Undo Support:</strong> Easily undo crop operations if you change your mind</li>
                 </ul>
                 
+                <h3>Privacy Tools (Blur & Mosaic)</h3>
+                <ul>
+                    <li><strong>Blur Tool:</strong> Select an image and click Blur to apply gaussian blur to sensitive areas</li>
+                    <li><strong>Mosaic Tool:</strong> Apply pixelation effect to hide content with adjustable block size</li>
+                    <li><strong>Area Selection:</strong> Draw a rectangle to select the area you want to obscure</li>
+                    <li><strong>Non-Destructive:</strong> Undo blur/mosaic operations if needed</li>
+                </ul>
+                
+                <h3>Group & Ungroup</h3>
+                <ul>
+                    <li><strong>Group Objects:</strong> Select multiple objects and group them (right-click menu or Ctrl+G)</li>
+                    <li><strong>Move as One:</strong> Grouped objects move, resize, and rotate together</li>
+                    <li><strong>Ungroup:</strong> Break apart groups to edit individual elements (right-click menu or Ctrl+Shift+G)</li>
+                    <li><strong>Nested Groups:</strong> Groups can contain other groups for complex compositions</li>
+                </ul>
+                
+                <h3>Align & Distribute</h3>
+                <ul>
+                    <li><strong>Align Left/Center/Right:</strong> Align selected objects horizontally</li>
+                    <li><strong>Align Top/Middle/Bottom:</strong> Align selected objects vertically</li>
+                    <li><strong>Distribute Horizontally:</strong> Space objects evenly left to right</li>
+                    <li><strong>Distribute Vertically:</strong> Space objects evenly top to bottom</li>
+                    <li><strong>Access:</strong> Right-click on multiple selected objects to see alignment options</li>
+                </ul>
+                
                 <h3 data-i18n="featuresLayerTitle">Layer Management</h3>
                 <ul>
                     <li><strong>Bring to Front:</strong> Move selected objects above others</li>
@@ -199,9 +288,12 @@
             <div class="content-section">
                 <h2 data-i18n="featuresExportTitle">Export & Share</h2>
                 <ul>
-                    <li><strong>High-Quality PNG:</strong> Export with transparency support</li>
+                    <li><strong>PNG Export:</strong> High-quality export with transparency support</li>
+                    <li><strong>JPG Export:</strong> Compressed format for smaller file sizes</li>
+                    <li><strong>PDF Export:</strong> Export as PDF document for printing or sharing</li>
                     <li><strong>Copy to Clipboard:</strong> Paste directly into other applications</li>
-                    <li><strong>Quick Download:</strong> Save to your device with one click</li>
+                    <li><strong>Smart Crop Export:</strong> Automatically crop to content bounds</li>
+                    <li><strong>Full Canvas Export:</strong> Export the entire canvas including empty space</li>
                     <li><strong>No Watermarks:</strong> Your images, completely clean</li>
                 </ul>
             </div>
@@ -216,6 +308,14 @@
                         </div>
                         <h3 data-i18n="featResponsive">Responsive Design</h3>
                         <p data-i18n="featResponsiveDesc">Works perfectly on desktop, tablet, and mobile devices. Touch-optimized interface for smartphones.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-hand-pointer"></i>
+                        </div>
+                        <h3 data-i18n="featTouch">Touch Support</h3>
+                        <p data-i18n="featTouchDesc">Full touch support on mobile: long-press for context menu, double-tap to edit text, pinch to zoom, and drag to move objects.</p>
                     </div>
                     
                     <div class="feature-card">
@@ -240,6 +340,14 @@
                         </div>
                         <h3 data-i18n="featKeyboard">Keyboard Shortcuts</h3>
                         <p data-i18n="featKeyboardDesc">Speed up your workflow with intuitive keyboard shortcuts for common actions.</p>
+                    </div>
+                    
+                    <div class="feature-card">
+                        <div class="feature-icon">
+                            <i class="fas fa-mouse-pointer"></i>
+                        </div>
+                        <h3 data-i18n="featContextMenu">Right-Click Menu</h3>
+                        <p data-i18n="featContextMenuDesc">Quick access to common actions via right-click context menu: copy, paste, delete, group, align, and more.</p>
                     </div>
                     
                     <div class="feature-card">
@@ -273,15 +381,18 @@
             </div>
             
             <div class="content-section">
-                <h2 data-i18n="featuresComingTitle">Coming Soon</h2>
-                <p data-i18n="featuresComingIntro">We're constantly improving PictriKit. Here's what's on our roadmap:</p>
+                <h2 data-i18n="featuresComingTitle">Recently Added</h2>
+                <p>New features we've recently added:</p>
                 <ul>
-                    <li>Batch processing for multiple projects</li>
-                    <li>Templates for common layouts</li>
-                    <li>More export formats (JPG, WebP, PDF)</li>
-                    <li>Advanced filters and effects</li>
-                    <li>Collaboration features</li>
-                    <li>Cloud save (optional)</li>
+                    <li>✅ Layout templates with drag-and-drop containers</li>
+                    <li>✅ Speech bubbles with editable text</li>
+                    <li>✅ Icon library with hundreds of design icons</li>
+                    <li>✅ Blur and mosaic privacy tools</li>
+                    <li>✅ Group and ungroup functionality</li>
+                    <li>✅ Align and distribute tools</li>
+                    <li>✅ Mobile touch support (long-press, double-tap)</li>
+                    <li>✅ PDF export option</li>
+                    <li>✅ Right-click context menu</li>
                 </ul>
                 <p>Have a feature request? <a href="/contact.html">Let us know!</a></p>
             </div>
