@@ -1,12 +1,9 @@
 // Service Worker for PictriKit
-const CACHE_NAME = 'pictrikit-v1.4.0';
+// 版本号更新会触发旧缓存清理
+const CACHE_NAME = 'pictrikit-v1.5.0';
+
+// 只缓存静态资源，不缓存 HTML 页面
 const STATIC_ASSETS = [
-  '/',
-  '/app.html',
-  '/index.html',
-  '/features.html',
-  '/tutorial.html',
-  '/faq.html',
   '/assets/css/main.css',
   '/assets/css/pages.css',
   '/assets/js/app.js',
@@ -28,7 +25,10 @@ const STATIC_ASSETS = [
   '/manifest.json'
 ];
 
-// Install event - cache static assets
+// HTML 页面列表 - 使用 Network-First 策略
+const HTML_PAGES = ['/', '/app.html', '/features.html', '/tutorial.html', '/faq.html', '/changelog.html'];
+
+// Install event - cache static assets only
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -40,7 +40,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate event - clean up old caches
+// Activate event - clean up ALL old caches immediately
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys()
@@ -58,7 +58,7 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch event - serve from cache, fallback to network
+// Fetch event - Network-First for HTML, Cache-First for static assets
 self.addEventListener('fetch', (event) => {
   // Skip non-GET requests
   if (event.request.method !== 'GET') return;
@@ -66,41 +66,40 @@ self.addEventListener('fetch', (event) => {
   // Skip external requests (CDN resources)
   if (!event.request.url.startsWith(self.location.origin)) return;
   
-  event.respondWith(
-    caches.match(event.request)
-      .then((cachedResponse) => {
-        if (cachedResponse) {
-          // Return cached response and update cache in background
-          event.waitUntil(
-            fetch(event.request)
-              .then((response) => {
-                if (response.ok) {
-                  caches.open(CACHE_NAME)
-                    .then((cache) => cache.put(event.request, response));
-                }
-              })
-              .catch(() => {})
-          );
-          return cachedResponse;
-        }
-        
-        // Not in cache, fetch from network
-        return fetch(event.request)
-          .then((response) => {
-            // Cache successful responses
-            if (response.ok) {
-              const responseClone = response.clone();
-              caches.open(CACHE_NAME)
-                .then((cache) => cache.put(event.request, responseClone));
-            }
-            return response;
-          })
-          .catch(() => {
-            // Offline fallback for HTML pages
-            if (event.request.headers.get('accept').includes('text/html')) {
-              return caches.match('/');
-            }
-          });
-      })
-  );
+  const url = new URL(event.request.url);
+  const isHTML = event.request.headers.get('accept')?.includes('text/html') || 
+                 HTML_PAGES.some(page => url.pathname === page || url.pathname === page.replace('.html', ''));
+  
+  if (isHTML) {
+    // Network-First for HTML pages - always try network first
+    event.respondWith(
+      fetch(event.request)
+        .then((response) => {
+          return response;
+        })
+        .catch(() => {
+          // Only fallback to cache if network fails (offline)
+          return caches.match(event.request);
+        })
+    );
+  } else {
+    // Cache-First for static assets
+    event.respondWith(
+      caches.match(event.request)
+        .then((cachedResponse) => {
+          if (cachedResponse) {
+            return cachedResponse;
+          }
+          return fetch(event.request)
+            .then((response) => {
+              if (response.ok) {
+                const responseClone = response.clone();
+                caches.open(CACHE_NAME)
+                  .then((cache) => cache.put(event.request, responseClone));
+              }
+              return response;
+            });
+        })
+    );
+  }
 });
