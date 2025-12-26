@@ -62,6 +62,10 @@ const Components = {
                 <div class="footer-section">
                     <h4>PictriKit</h4>
                     <p data-i18n="footerDesc">Free online screenshot stitching tool</p>
+                    <p class="footer-version">
+                        <a href="/changelog.html" class="version-link">v1.4.0</a>
+                        <span class="version-status">• Actively maintained</span>
+                    </p>
                 </div>
                 <div class="footer-section">
                     <h4 data-i18n="footerQuickLinks">Quick Links</h4>
@@ -69,7 +73,7 @@ const Components = {
                         <li><a href="/features.html" data-i18n="navFeatures">Features</a></li>
                         <li><a href="/tutorial.html" data-i18n="navTutorial">Tutorial</a></li>
                         <li><a href="/faq.html" data-i18n="navFaq">FAQ</a></li>
-                        <li><a href="/about.html" data-i18n="navAbout">About</a></li>
+                        <li><a href="/changelog.html" data-i18n="navChangelog">Changelog</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -77,6 +81,7 @@ const Components = {
                     <ul>
                         <li><a href="/privacy.html" data-i18n="navPrivacy">Privacy Policy</a></li>
                         <li><a href="/terms.html" data-i18n="navTerms">Terms of Service</a></li>
+                        <li><a href="/about.html" data-i18n="navAbout">About</a></li>
                         <li><a href="/contact.html" data-i18n="navContact">Contact Us</a></li>
                     </ul>
                 </div>
@@ -85,9 +90,6 @@ const Components = {
                     <div class="social-links">
                         <a href="#" class="social-link" aria-label="Twitter">
                             <i class="fab fa-twitter"></i>
-                        </a>
-                        <a href="#" class="social-link" aria-label="Facebook">
-                            <i class="fab fa-facebook"></i>
                         </a>
                         <a href="#" class="social-link" aria-label="GitHub">
                             <i class="fab fa-github"></i>

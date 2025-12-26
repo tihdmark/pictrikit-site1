@@ -1,38 +1,57 @@
 ﻿// Translations moved to lang/*.json files and loaded via i18n.js
 
-        let currentLang = 'en';
-        let currentTheme = 'light';
-        let currentZoom = 1;
-        let snapEnabled = true;
-        let drawingMode = false;
-        const SNAP_THRESHOLD = 5;
-        const SNAP_EDGE_THRESHOLD = 2;
-        const ANGLE_SNAP = 15;
-        const SNAP_ANGLES = [0, 45, 90, 135, 180, 225, 270, 315, 360];
-        let guideLines = [], alignLabels = [], rotationLabel = null;
-        let history = [], historyStep = -1;
+        // ==================== 启动流程控制 ====================
+        // 模块引用（先声明为 null，后面初始化时赋值）
+        let layoutContainersModule = null;
+        let layoutTemplatesModule = null;
+        let imageUploadModule = null;
+        
+        // 显示加载遮罩
+        (function showInitialLoading() {
+            const loadingOverlay = document.getElementById('loadingOverlay');
+            if (loadingOverlay) {
+                loadingOverlay.classList.add('show');
+            }
+        })();
+
+        // ==================== 全局变量引用 ====================
+        // 使用 AppState 集中管理状态，这里创建本地引用以保持兼容性
+        let currentLang = AppState.currentLang;
+        let currentTheme = AppState.currentTheme;
+        let currentZoom = AppState.currentZoom;
+        let snapEnabled = AppState.snapEnabled;
+        let drawingMode = AppState.drawingMode;
+        const SNAP_THRESHOLD = AppState.SNAP_THRESHOLD;
+        const SNAP_EDGE_THRESHOLD = AppState.SNAP_EDGE_THRESHOLD;
+        const ANGLE_SNAP = AppState.ANGLE_SNAP;
+        const SNAP_ANGLES = AppState.SNAP_ANGLES;
+        let guideLines = AppState.guideLines;
+        let alignLabels = AppState.alignLabels;
+        let rotationLabel = AppState.rotationLabel;
+        let history = AppState.history;
+        let historyStep = AppState.historyStep;
         let bgPickr, textPickr, bgPickrMobile, textPickrMobile, drawPickr, drawPickrMobile;
         
         // 空格键拖动画板相关变量
-        let isSpacePressed = false;
-        let isPanning = false;
-        let lastPosX = 0;
-        let lastPosY = 0;
+        let isSpacePressed = AppState.isSpacePressed;
+        let isPanning = AppState.isPanning;
+        let lastPosX = AppState.lastPosX;
+        let lastPosY = AppState.lastPosY;
         
         // 导出模式：'full' 完整画布, 'smart' 智能裁剪
-        let shareExportMode = 'full';
-        let downloadExportMode = 'full';
+        let shareExportMode = AppState.shareExportMode;
+        let downloadExportMode = AppState.downloadExportMode;
         
         // 裁剪工具相关变量
-        let cropMode = false;
-        let cropTarget = null;
-        let originalImageState = null;
-        let cropRect = null;
-        let cropOverlays = [];
+        let cropMode = AppState.cropMode;
+        let cropTarget = AppState.cropTarget;
+        let originalImageState = AppState.originalImageState;
+        let cropRect = AppState.cropRect;
+        let cropOverlays = AppState.cropOverlays;
         
         // 形状工具相关变量
-        let currentShapeColor = 'rgba(102, 126, 234, 0.5)';
-        let currentShapeStroke = '#667eea';
+        let currentShapeColor = AppState.currentShapeColor;
+        let currentShapeStroke = AppState.currentShapeStroke;
         let shapePickr;
 
         // 使用 i18n.js 的翻译功能
@@ -45,6 +64,7 @@
         async function changeLanguage(e, lang) {
             e.stopPropagation();
             currentLang = lang;
+            setState('currentLang', lang);
             
             // 使用 i18n.js 切换语言
             if (typeof I18n !== 'undefined') {
@@ -380,23 +400,40 @@
         
         function initCanvas() {
             const container = document.querySelector('.canvas-container');
+            if (!container) return;
             canvasWidth = container.clientWidth;
             canvasHeight = container.clientHeight;
             canvas.setDimensions({ width: canvasWidth, height: canvasHeight });
             canvas.renderAll();
         }
 
+        // ==================== Canvas 初始化（需要 fabric 已加载）====================
+        // 检查 fabric 是否已加载
+        if (typeof fabric === 'undefined') {
+            console.error('[Bootstrap] fabric.js not loaded!');
+        }
+        
+        // 标记 fabric 已就绪
+        setBootstrapState('fabricReady', true);
+        
         const canvas = new fabric.Canvas('canvas', {
             backgroundColor: '#ffffff',
             preserveObjectStacking: true,
             selection: true,
-            perPixelTargetFind: true,  // 允许精确像素检测，可以选择被覆盖的元素
-            targetFindTolerance: 5     // 增加选择容差
+            perPixelTargetFind: true,
+            targetFindTolerance: 5
         });
 
-        canvas.wrapperEl.oncontextmenu = (e) => { e.preventDefault(); return false; };
+        // 右键菜单由contextmenu事件处理，这里不再阻止
+        // canvas.wrapperEl.oncontextmenu = (e) => { e.preventDefault(); return false; };
 
         initCanvas();
+        
+        // 标记 canvas 已就绪
+        setBootstrapState('canvasReady', true);
+        
+        // 标记 canvas 已就绪
+        setBootstrapState('canvasReady', true);
         initTheme();
         updateLanguage();
         window.addEventListener('resize', initCanvas);
@@ -426,74 +463,53 @@
             setTimeout(() => t.classList.remove('show'), 800);
         }
 
-        document.getElementById('fileInput').addEventListener('change', (e) => {
-            if (e.target.files.length) {
-                Array.from(e.target.files).forEach(addImage);
-                e.target.value = '';
-            }
-        });
-
-        document.getElementById('bgInput').addEventListener('change', (e) => {
-            if (e.target.files[0]) {
-                const reader = new FileReader();
-                reader.onload = (ev) => {
-                    fabric.Image.fromURL(ev.target.result, (img) => {
-                        canvas.setBackgroundImage(img, canvas.renderAll.bind(canvas), {
-                            scaleX: canvasWidth / img.width,
-                            scaleY: canvasHeight / img.height
-                        });
-                        saveState();
-                        closeAllDrawers();
-                        showToast('✓ Background set');
-                    });
-                };
-                reader.readAsDataURL(e.target.files[0]);
-                e.target.value = '';
-            }
-        });
-
+        // ==================== 图片上传模块初始化 ====================
+        // 使用抽离的 imageUpload 模块
+        imageUploadModule = initImageUpload(canvas, 
+            () => ({ width: canvasWidth, height: canvasHeight }),
+            { saveState, hideEmptyState, showToast, closeAllDrawers }
+        );
+        
+        // 暴露 triggerUpload 和 addImage 供全局调用
         function triggerUpload() {
-            document.getElementById('fileInput').click();
+            if (!isBootstrapComplete()) {
+                showToast('Loading...');
+                return;
+            }
+            imageUploadModule.triggerUpload();
         }
-
+        
         function addImage(file) {
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                fabric.Image.fromURL(e.target.result, (img) => {
-                    const maxW = canvasWidth * 0.6, maxH = canvasHeight * 0.6;
-                    if (img.width > maxW || img.height > maxH) {
-                        img.scale(Math.min(maxW / img.width, maxH / img.height));
-                    }
-                    img.set({
-                        left: canvasWidth / 2,
-                        top: canvasHeight / 2,
-                        originX: 'center',
-                        originY: 'center',
-                        cornerColor: '#0066cc',
-                        cornerStyle: 'circle',
-                        borderColor: '#0066cc',
-                        cornerSize: 10,
-                        transparentCorners: false
-                    });
-                    canvas.add(img);
-                    canvas.setActiveObject(img);
-                    canvas.renderAll();
-                    hideEmptyState();
-                    saveState();
-                    showToast('✓ Image added');
-                });
-            };
-            reader.readAsDataURL(file);
+            if (!isBootstrapComplete()) return;
+            imageUploadModule.addImage(file);
+        }
+        
+        function triggerBgUpload() {
+            if (!isBootstrapComplete()) {
+                showToast('Loading...');
+                return;
+            }
+            imageUploadModule.triggerBgUpload();
         }
 
-        // 保存画笔设置
-        let savedBrushSettings = {
-            color: '#000000',
-            width: 5
-        };
+        // 保存画笔设置 - 使用 AppState
+        let savedBrushSettings = AppState.savedBrushSettings;
+
+        // 关闭绘画模式
+        function disableDrawMode() {
+            if (drawingMode) {
+                drawingMode = false;
+                setState('drawingMode', false);
+                canvas.isDrawingMode = false;
+                document.getElementById('drawToggle').classList.remove('active');
+                const mobileBtn = document.getElementById('drawToggleMobile');
+                if (mobileBtn) mobileBtn.classList.remove('active');
+            }
+        }
 
         function toggleDraw() {
             drawingMode = !drawingMode;
+            setState('drawingMode', drawingMode);
             canvas.isDrawingMode = drawingMode;
             document.getElementById('drawToggle').classList.toggle('active', drawingMode);
             const mobileBtn = document.getElementById('drawToggleMobile');
@@ -516,6 +532,7 @@
 
         function updateBrushSize(value) {
             savedBrushSettings.width = parseInt(value);
+            setNestedState('savedBrushSettings', 'width', parseInt(value));
             canvas.freeDrawingBrush.width = parseInt(value);
             document.getElementById('brushSizeValue').textContent = value + 'px';
             const mobileValue = document.getElementById('brushSizeValueMobile');
@@ -526,13 +543,8 @@
             if (mobileBrush) mobileBrush.value = value;
         }
 
-        // 保存文字设置
-        let savedTextSettings = {
-            fontFamily: 'Arial',
-            fontSize: 32,
-            fill: '#000000',
-            fontWeight: 'normal'
-        };
+        // 保存文字设置 - 使用 AppState
+        let savedTextSettings = AppState.savedTextSettings;
 
         function addText() {
             const text = new fabric.IText('Double click to edit', {
@@ -1159,23 +1171,7 @@
             saveState();
         }
 
-        document.addEventListener('paste', (e) => {
-            e.preventDefault();
-            for (const item of e.clipboardData.items) {
-                if (item.type.includes('image')) {
-                    addImage(item.getAsFile());
-                    break;
-                }
-            }
-        });
-
-        document.getElementById('canvasContainer').addEventListener('dragover', (e) => e.preventDefault());
-        document.getElementById('canvasContainer').addEventListener('drop', (e) => {
-            e.preventDefault();
-            Array.from(e.dataTransfer.files).forEach(f => {
-                if (f.type.startsWith('image/')) addImage(f);
-            });
-        });
+        // 粘贴和拖放事件已移至 src/upload/imageUpload.js 模块
 
         // 智能对齐
         canvas.on('object:moving', function(e) {
@@ -1404,14 +1400,54 @@
             closeAllDrawers();
         });
 
+        // 水平翻转 - 以画板垂直中心线为基准
         function flipHorizontal() {
             const o = canvas.getActiveObject();
-            if (o) { o.set('flipX', !o.flipX); canvas.renderAll(); saveState(); }
+            if (!o) return;
+            
+            // 获取画板中心
+            const canvasCenterX = canvasWidth / 2;
+            
+            // 获取对象中心
+            const objCenter = o.getCenterPoint();
+            
+            // 计算对象中心到画板中心的距离
+            const distanceFromCenter = objCenter.x - canvasCenterX;
+            
+            // 翻转对象本身
+            o.set('flipX', !o.flipX);
+            
+            // 将对象移动到画板中心线的另一侧（镜像位置）
+            o.set('left', o.left - 2 * distanceFromCenter);
+            
+            o.setCoords();
+            canvas.renderAll();
+            saveState();
         }
 
+        // 垂直翻转 - 以画板水平中心线为基准
         function flipVertical() {
             const o = canvas.getActiveObject();
-            if (o) { o.set('flipY', !o.flipY); canvas.renderAll(); saveState(); }
+            if (!o) return;
+            
+            // 获取画板中心
+            const canvasCenterY = canvasHeight / 2;
+            
+            // 获取对象中心
+            const objCenter = o.getCenterPoint();
+            
+            // 计算对象中心到画板中心的距离
+            const distanceFromCenter = objCenter.y - canvasCenterY;
+            
+            // 翻转对象本身
+            o.set('flipY', !o.flipY);
+            
+            // 将对象移动到画板中心线的另一侧（镜像位置）
+            o.set('top', o.top - 2 * distanceFromCenter);
+            
+            o.setCoords();
+            canvas.renderAll();
+            saveState();
         }
 
         // Layer management functions
@@ -2012,10 +2048,11 @@
             shapes: ['square', 'circle', 'triangle', 'hexagon', 'star', 'heart', 'diamond', 'shield', 'bookmark', 'flag', 'tag', 'certificate', 'cube', 'box', 'layer-group', 'shapes']
         };
 
-        let currentIconCategory = 'popular';
-        let iconSearchTimeout = null;
-        let currentIconColor = '#667eea';
-        let iconPickr = null;
+        // 图标相关变量 - 使用 AppState
+        let currentIconCategory = AppState.currentIconCategory;
+        let iconSearchTimeout = AppState.iconSearchTimeout;
+        let currentIconColor = AppState.currentIconColor;
+        let iconPickr = AppState.iconPickr;
 
         function openIconsModal() {
             document.getElementById('iconsModal').classList.add('show');
@@ -2573,6 +2610,29 @@
                         </div>
                     `;
                     break;
+                
+                case 'bubble':
+                    // 检查启动是否完成
+                    if (!isBootstrapComplete()) {
+                        showToast('Loading...');
+                        return;
+                    }
+                    // 直接添加气泡到画布，不显示模态框
+                    addSpeechBubble();
+                    return;
+                    
+                case 'layout':
+                    // 检查启动是否完成
+                    if (!isBootstrapComplete() || !layoutTemplatesModule) {
+                        showToast('Loading...');
+                        return;
+                    }
+                    // 打开布局模态框
+                    openLayoutModal();
+                    return;
+                    
+                default:
+                    return;
             }
             
             modalBody.innerHTML = content;
@@ -2829,12 +2889,1321 @@
             console.log('Bookmark bubble reset. Reload page to see it again.');
         };
 
-        // 启动应用
-        if (typeof I18n !== 'undefined') {
-            initApp();
+        // ==================== 布局模块初始化 ====================
+        // 使用抽离的 layout 模块
+        layoutContainersModule = initLayoutContainers(canvas,
+            () => ({ width: canvasWidth, height: canvasHeight }),
+            { saveState, hideEmptyState, showToast }
+        );
+        
+        layoutTemplatesModule = initLayoutTemplates(canvas,
+            () => ({ width: canvasWidth, height: canvasHeight }),
+            { saveState, hideEmptyState, showToast }
+        );
+        
+        // 暴露布局函数供全局调用
+        function openLayoutModal() {
+            if (!layoutTemplatesModule) {
+                showToast('Loading...');
+                return;
+            }
+            layoutTemplatesModule.openLayoutModal();
+        }
+        
+        function closeLayoutModal() {
+            layoutTemplatesModule.closeLayoutModal();
+        }
+        
+        function applyCanvasPreset(width, height) {
+            layoutTemplatesModule.applyCanvasPreset(width, height);
+        }
+        
+        function insertLayoutStructure(type) {
+            layoutTemplatesModule.insertLayoutStructure(type);
+        }
+        
+        function insertTemplate(type) {
+            layoutTemplatesModule.insertTemplate(type);
+        }
+        
+        // 暴露容器函数到全局
+        window.isLayoutDropZone = layoutContainersModule.isLayoutDropZone;
+        window.findDropZoneAtPoint = layoutContainersModule.findDropZoneAtPoint;
+        window.adoptIntoLayout = layoutContainersModule.adoptIntoLayout;
+        window.releaseFromLayout = layoutContainersModule.releaseFromLayout;
+        
+        // 标记模块已就绪
+        setBootstrapState('modulesReady', true);
+        
+        // ==================== 启动应用 ====================
+        // DOM ready 后启动
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', finalizeBootstrap);
         } else {
-            // 如果 i18n 未加载，直接启动
+            finalizeBootstrap();
+        }
+        
+        function finalizeBootstrap() {
+            setBootstrapState('domReady', true);
+            
+            // 启动 i18n
+            if (typeof I18n !== 'undefined') {
+                initApp();
+            } else {
+                saveState();
+                showToast('Welcome 🎉');
+            }
+        }
+        
+        // ==================== 气泡功能 ====================
+        
+        function addSpeechBubble() {
+            // 检查 fabric 是否已加载
+            if (typeof fabric === 'undefined') {
+                showToast('Loading...');
+                return;
+            }
+            
+            disableDrawMode();
+            
+            const bubbleWidth = 200;
+            const bubbleHeight = 80;
+            const tailSize = 20;
+            const padding = 12;
+            
+            const bubblePath = new fabric.Path(
+                'M 10 0 ' +
+                'L ' + (bubbleWidth - 10) + ' 0 ' +
+                'Q ' + bubbleWidth + ' 0 ' + bubbleWidth + ' 10 ' +
+                'L ' + bubbleWidth + ' ' + (bubbleHeight - 10) + ' ' +
+                'Q ' + bubbleWidth + ' ' + bubbleHeight + ' ' + (bubbleWidth - 10) + ' ' + bubbleHeight + ' ' +
+                'L ' + (50 + tailSize) + ' ' + bubbleHeight + ' ' +
+                'L 40 ' + (bubbleHeight + tailSize) + ' ' +
+                'L 50 ' + bubbleHeight + ' ' +
+                'L 10 ' + bubbleHeight + ' ' +
+                'Q 0 ' + bubbleHeight + ' 0 ' + (bubbleHeight - 10) + ' ' +
+                'L 0 10 ' +
+                'Q 0 0 10 0 Z',
+                {
+                    fill: '#ffffff',
+                    stroke: '#333333',
+                    strokeWidth: 2,
+                    left: -bubbleWidth / 2,
+                    top: -(bubbleHeight + tailSize) / 2,
+                    originX: 'left',
+                    originY: 'top',
+                    selectable: false,
+                    evented: false
+                }
+            );
+            
+            // 使用Textbox支持自动换行
+            const bubbleText = new fabric.Textbox('Type here', {
+                fontSize: 14,
+                fill: '#333333',
+                fontFamily: 'Arial',
+                left: 0,
+                top: -tailSize / 2,
+                originX: 'center',
+                originY: 'center',
+                textAlign: 'center',
+                width: bubbleWidth - padding * 2,
+                splitByGrapheme: true,
+                selectable: false,
+                evented: false
+            });
+            
+            const speechBubble = new fabric.Group([bubblePath, bubbleText], {
+                left: canvasWidth / 2,
+                top: canvasHeight / 2,
+                originX: 'center',
+                originY: 'center',
+                cornerColor: '#0066cc',
+                cornerStyle: 'circle',
+                borderColor: '#0066cc',
+                cornerSize: 10,
+                transparentCorners: false,
+                subTargetCheck: true,
+                interactive: true,
+                _isSpeechBubble: true,
+                _bubbleWidth: bubbleWidth,
+                _bubbleHeight: bubbleHeight,
+                _padding: padding
+            });
+            
+            canvas.add(speechBubble);
+            canvas.setActiveObject(speechBubble);
+            canvas.renderAll();
+            hideEmptyState();
             saveState();
-            showToast('Welcome 🎉');
+            showToast('💬 Speech bubble added');
+            closeAllDrawers();
+        }
+        
+        // ==================== 对齐与分布功能 ====================
+        
+        function alignLeft() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            const objects = activeObject.getObjects().slice();
+            if (objects.length < 2) return;
+            
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            
+            let minLeft = Infinity;
+            objects.forEach(obj => {
+                obj.setCoords();
+                const bound = obj.getBoundingRect();
+                if (bound.left < minLeft) minLeft = bound.left;
+            });
+            
+            objects.forEach(obj => {
+                const bound = obj.getBoundingRect();
+                const offset = minLeft - bound.left;
+                obj.set('left', obj.left + offset);
+                obj.setCoords();
+            });
+            
+            const newSelection = new fabric.ActiveSelection(objects, { canvas: canvas });
+            canvas.setActiveObject(newSelection);
+            if (typeof disableActiveSelectionRotation === 'function') {
+                disableActiveSelectionRotation(newSelection);
+            }
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ Aligned left');
+        }
+        
+        function alignCenterH() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            const objects = activeObject.getObjects().slice();
+            if (objects.length < 2) return;
+            
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            
+            let minLeft = Infinity, maxRight = -Infinity;
+            objects.forEach(obj => {
+                obj.setCoords();
+                const bound = obj.getBoundingRect();
+                if (bound.left < minLeft) minLeft = bound.left;
+                if (bound.left + bound.width > maxRight) maxRight = bound.left + bound.width;
+            });
+            const centerX = (minLeft + maxRight) / 2;
+            
+            objects.forEach(obj => {
+                const bound = obj.getBoundingRect();
+                const objCenterX = bound.left + bound.width / 2;
+                const offset = centerX - objCenterX;
+                obj.set('left', obj.left + offset);
+                obj.setCoords();
+            });
+            
+            const newSelection = new fabric.ActiveSelection(objects, { canvas: canvas });
+            canvas.setActiveObject(newSelection);
+            if (typeof disableActiveSelectionRotation === 'function') {
+                disableActiveSelectionRotation(newSelection);
+            }
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ Aligned center');
+        }
+        
+        function alignRight() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            const objects = activeObject.getObjects().slice();
+            if (objects.length < 2) return;
+            
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            
+            let maxRight = -Infinity;
+            objects.forEach(obj => {
+                obj.setCoords();
+                const bound = obj.getBoundingRect();
+                const right = bound.left + bound.width;
+                if (right > maxRight) maxRight = right;
+            });
+            
+            objects.forEach(obj => {
+                const bound = obj.getBoundingRect();
+                const objRight = bound.left + bound.width;
+                const offset = maxRight - objRight;
+                obj.set('left', obj.left + offset);
+                obj.setCoords();
+            });
+            
+            const newSelection = new fabric.ActiveSelection(objects, { canvas: canvas });
+            canvas.setActiveObject(newSelection);
+            if (typeof disableActiveSelectionRotation === 'function') {
+                disableActiveSelectionRotation(newSelection);
+            }
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ Aligned right');
+        }
+        
+        function alignTop() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            const objects = activeObject.getObjects().slice();
+            if (objects.length < 2) return;
+            
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            
+            let minTop = Infinity;
+            objects.forEach(obj => {
+                obj.setCoords();
+                const bound = obj.getBoundingRect();
+                if (bound.top < minTop) minTop = bound.top;
+            });
+            
+            objects.forEach(obj => {
+                const bound = obj.getBoundingRect();
+                const offset = minTop - bound.top;
+                obj.set('top', obj.top + offset);
+                obj.setCoords();
+            });
+            
+            const newSelection = new fabric.ActiveSelection(objects, { canvas: canvas });
+            canvas.setActiveObject(newSelection);
+            if (typeof disableActiveSelectionRotation === 'function') {
+                disableActiveSelectionRotation(newSelection);
+            }
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ Aligned top');
+        }
+        
+        function alignCenterV() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            const objects = activeObject.getObjects().slice();
+            if (objects.length < 2) return;
+            
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            
+            let minTop = Infinity, maxBottom = -Infinity;
+            objects.forEach(obj => {
+                obj.setCoords();
+                const bound = obj.getBoundingRect();
+                if (bound.top < minTop) minTop = bound.top;
+                if (bound.top + bound.height > maxBottom) maxBottom = bound.top + bound.height;
+            });
+            const centerY = (minTop + maxBottom) / 2;
+            
+            objects.forEach(obj => {
+                const bound = obj.getBoundingRect();
+                const objCenterY = bound.top + bound.height / 2;
+                const offset = centerY - objCenterY;
+                obj.set('top', obj.top + offset);
+                obj.setCoords();
+            });
+            
+            const newSelection = new fabric.ActiveSelection(objects, { canvas: canvas });
+            canvas.setActiveObject(newSelection);
+            if (typeof disableActiveSelectionRotation === 'function') {
+                disableActiveSelectionRotation(newSelection);
+            }
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ Aligned middle');
+        }
+        
+        function alignBottom() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            const objects = activeObject.getObjects().slice();
+            if (objects.length < 2) return;
+            
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            
+            let maxBottom = -Infinity;
+            objects.forEach(obj => {
+                obj.setCoords();
+                const bound = obj.getBoundingRect();
+                const bottom = bound.top + bound.height;
+                if (bottom > maxBottom) maxBottom = bottom;
+            });
+            
+            objects.forEach(obj => {
+                const bound = obj.getBoundingRect();
+                const objBottom = bound.top + bound.height;
+                const offset = maxBottom - objBottom;
+                obj.set('top', obj.top + offset);
+                obj.setCoords();
+            });
+            
+            const newSelection = new fabric.ActiveSelection(objects, { canvas: canvas });
+            canvas.setActiveObject(newSelection);
+            if (typeof disableActiveSelectionRotation === 'function') {
+                disableActiveSelectionRotation(newSelection);
+            }
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ Aligned bottom');
+        }
+        
+        // 水平分布
+        function distributeH() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            const objects = activeObject.getObjects().slice();
+            if (objects.length < 3) {
+                showToast('至少需要选择 3 个对象');
+                return;
+            }
+            
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            
+            const items = objects.map(obj => {
+                obj.setCoords();
+                const bound = obj.getBoundingRect();
+                return { obj, boundLeft: bound.left, boundWidth: bound.width };
+            });
+            items.sort((a, b) => a.boundLeft - b.boundLeft);
+            
+            const first = items[0];
+            const last = items[items.length - 1];
+            const totalWidth = (last.boundLeft + last.boundWidth) - first.boundLeft;
+            const contentWidth = items.reduce((sum, item) => sum + item.boundWidth, 0);
+            const gap = (totalWidth - contentWidth) / (items.length - 1);
+            
+            let currentLeft = first.boundLeft;
+            items.forEach((item, i) => {
+                if (i === 0) {
+                    currentLeft += item.boundWidth + gap;
+                    return;
+                }
+                const offset = currentLeft - item.boundLeft;
+                item.obj.set('left', item.obj.left + offset);
+                item.obj.setCoords();
+                currentLeft += item.boundWidth + gap;
+            });
+            
+            const newSelection = new fabric.ActiveSelection(objects, { canvas: canvas });
+            canvas.setActiveObject(newSelection);
+            if (typeof disableActiveSelectionRotation === 'function') {
+                disableActiveSelectionRotation(newSelection);
+            }
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ Distributed horizontally');
+        }
+        
+        // 垂直分布
+        function distributeV() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            const objects = activeObject.getObjects().slice();
+            if (objects.length < 3) {
+                showToast('至少需要选择 3 个对象');
+                return;
+            }
+            
+            canvas.discardActiveObject();
+            canvas.renderAll();
+            
+            const items = objects.map(obj => {
+                obj.setCoords();
+                const bound = obj.getBoundingRect();
+                return { obj, boundTop: bound.top, boundHeight: bound.height };
+            });
+            items.sort((a, b) => a.boundTop - b.boundTop);
+            
+            const first = items[0];
+            const last = items[items.length - 1];
+            const totalHeight = (last.boundTop + last.boundHeight) - first.boundTop;
+            const contentHeight = items.reduce((sum, item) => sum + item.boundHeight, 0);
+            const gap = (totalHeight - contentHeight) / (items.length - 1);
+            
+            let currentTop = first.boundTop;
+            items.forEach((item, i) => {
+                if (i === 0) {
+                    currentTop += item.boundHeight + gap;
+                    return;
+                }
+                const offset = currentTop - item.boundTop;
+                item.obj.set('top', item.obj.top + offset);
+                item.obj.setCoords();
+                currentTop += item.boundHeight + gap;
+            });
+            
+            const newSelection = new fabric.ActiveSelection(objects, { canvas: canvas });
+            canvas.setActiveObject(newSelection);
+            if (typeof disableActiveSelectionRotation === 'function') {
+                disableActiveSelectionRotation(newSelection);
+            }
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ Distributed vertically');
         }
 
+        // 布局容器系统已移至 src/layout/containers.js 模块
+        // 双击容器化 Group 时解组（桌面端）
+        canvas.on('mouse:dblclick', function(e) {
+            if (e.target && e.target._isContainerGroup) {
+                layoutContainersModule.releaseFromLayout(e.target);
+                return;
+            }
+            
+            // 双击气泡时进入编辑模式
+            if (e.target && e.target._isSpeechBubble) {
+                enterBubbleEditMode(e.target);
+                return;
+            }
+        });
+        
+        // ==================== 移动端触摸支持 ====================
+        // 移动端双击和长按检测变量
+        let lastTapTime = 0;
+        let lastTapPosition = { x: 0, y: 0 };
+        const DOUBLE_TAP_DELAY = 300; // 双击间隔时间（毫秒）
+        const DOUBLE_TAP_DISTANCE = 40; // 双击位置容差（像素）
+        
+        // 移动端长按显示右键菜单
+        let longPressTimer = null;
+        let longPressPosition = { x: 0, y: 0 };
+        const LONG_PRESS_DELAY = 400; // 长按时间（毫秒）- 缩短到400ms
+        
+        // 监听 canvasContainer 的触摸事件
+        const canvasContainer = document.getElementById('canvasContainer');
+        
+        if (canvasContainer) {
+            // 触摸开始
+            canvasContainer.addEventListener('touchstart', function(e) {
+                if (e.touches.length !== 1) return; // 只处理单指触摸
+                
+                const touch = e.touches[0];
+                const currentTime = Date.now();
+                const currentPosition = { x: touch.clientX, y: touch.clientY };
+                
+                // 获取触摸位置对应的 fabric 对象
+                const target = canvas.findTarget(e);
+                
+                longPressPosition = currentPosition;
+                
+                // 检测双击（同一位置快速点击两次）
+                const distance = Math.sqrt(
+                    Math.pow(currentPosition.x - lastTapPosition.x, 2) + 
+                    Math.pow(currentPosition.y - lastTapPosition.y, 2)
+                );
+                
+                if ((currentTime - lastTapTime) < DOUBLE_TAP_DELAY && distance < DOUBLE_TAP_DISTANCE) {
+                    // 双击检测成功 - 清除长按计时器
+                    if (longPressTimer) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                    
+                    e.preventDefault();
+                    
+                    if (target) {
+                        // 双击容器组 - 解组
+                        if (target._isContainerGroup && layoutContainersModule) {
+                            layoutContainersModule.releaseFromLayout(target);
+                            lastTapTime = 0;
+                            return;
+                        }
+                        
+                        // 双击气泡 - 编辑文字
+                        if (target._isSpeechBubble) {
+                            enterBubbleEditMode(target);
+                            lastTapTime = 0;
+                            return;
+                        }
+                        
+                        // 双击文字对象 - 进入编辑模式
+                        if (target.type === 'i-text' || target.type === 'textbox') {
+                            canvas.setActiveObject(target);
+                            target.enterEditing();
+                            target.selectAll();
+                            canvas.renderAll();
+                            lastTapTime = 0;
+                            return;
+                        }
+                    }
+                    
+                    lastTapTime = 0;
+                    return;
+                }
+                
+                lastTapTime = currentTime;
+                lastTapPosition = currentPosition;
+                
+                // 清除之前的长按计时器
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+                
+                // 启动长按计时器（显示右键菜单）
+                longPressTimer = setTimeout(() => {
+                    // 长按触发 - 显示右键菜单
+                    const currentTarget = canvas.findTarget(e) || canvas.getActiveObject();
+                    
+                    if (currentTarget) {
+                        canvas.setActiveObject(currentTarget);
+                        canvas.renderAll();
+                        showContextMenu(longPressPosition.x, longPressPosition.y);
+                        // 震动反馈（如果支持）
+                        if (navigator.vibrate) {
+                            navigator.vibrate(30);
+                        }
+                    }
+                    longPressTimer = null;
+                }, LONG_PRESS_DELAY);
+                
+            }, { passive: false });
+            
+            // 触摸移动 - 清除长按计时器（移动超过阈值才取消）
+            canvasContainer.addEventListener('touchmove', function(e) {
+                if (longPressTimer && e.touches.length === 1) {
+                    const touch = e.touches[0];
+                    const distance = Math.sqrt(
+                        Math.pow(touch.clientX - longPressPosition.x, 2) + 
+                        Math.pow(touch.clientY - longPressPosition.y, 2)
+                    );
+                    // 移动超过10像素才取消长按
+                    if (distance > 10) {
+                        clearTimeout(longPressTimer);
+                        longPressTimer = null;
+                    }
+                }
+            }, { passive: true });
+            
+            // 触摸结束 - 清除长按计时器
+            canvasContainer.addEventListener('touchend', function(e) {
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+            }, { passive: true });
+            
+            // 触摸取消 - 清除长按计时器
+            canvasContainer.addEventListener('touchcancel', function(e) {
+                if (longPressTimer) {
+                    clearTimeout(longPressTimer);
+                    longPressTimer = null;
+                }
+            }, { passive: true });
+        }
+        
+        // 触摸其他地方关闭右键菜单
+        document.addEventListener('touchstart', function(e) {
+            const menu = document.getElementById('contextMenu');
+            if (menu && menu.classList.contains('show') && !menu.contains(e.target)) {
+                hideContextMenu();
+            }
+        }, { passive: true });
+
+        // ==================== 气泡编辑功能 ====================
+        
+        // 进入气泡编辑模式
+        function enterBubbleEditMode(bubbleGroup) {
+            if (!bubbleGroup || !bubbleGroup._isSpeechBubble) return;
+            
+            const scaleX = bubbleGroup.scaleX || 1;
+            const scaleY = bubbleGroup.scaleY || 1;
+            const groupAngle = bubbleGroup.angle || 0;
+            
+            // 找到气泡中的文字对象（支持textbox和i-text）
+            const textObj = bubbleGroup._objects.find(obj => 
+                obj.type === 'textbox' || obj.type === 'i-text' || obj.type === 'text'
+            );
+            if (!textObj) return;
+            
+            // 获取气泡尺寸（从组属性或默认值）
+            const bubbleWidth = bubbleGroup._bubbleWidth || 200;
+            const bubbleHeight = bubbleGroup._bubbleHeight || 80;
+            const padding = bubbleGroup._padding || 12;
+            
+            // 计算可用文字区域（考虑缩放）
+            const textAreaWidth = (bubbleWidth - padding * 2) * scaleX;
+            const textAreaHeight = (bubbleHeight - padding * 2) * scaleY;
+            
+            // 计算文字在画布中的位置
+            const matrix = bubbleGroup.calcTransformMatrix();
+            const textPoint = fabric.util.transformPoint(
+                { x: 0, y: -10 * scaleY },
+                matrix
+            );
+            
+            // 隐藏组内的文字
+            textObj.visible = false;
+            bubbleGroup.dirty = true;
+            canvas.renderAll();
+            
+            // 字体大小
+            const fontSize = (textObj.fontSize || 14) * Math.min(scaleX, scaleY);
+            
+            // 保存上一次有效的文本
+            let lastValidText = textObj.text || '';
+            
+            // 创建临时编辑文本框
+            const editText = new fabric.Textbox(lastValidText, {
+                fontSize: fontSize,
+                fill: textObj.fill || '#333333',
+                fontFamily: textObj.fontFamily || 'Arial',
+                left: textPoint.x,
+                top: textPoint.y,
+                originX: 'center',
+                originY: 'center',
+                textAlign: 'center',
+                angle: groupAngle,
+                width: textAreaWidth,
+                splitByGrapheme: true,
+                _tempEditFor: bubbleGroup,
+                _originalTextObj: textObj,
+                hasControls: false,
+                hasBorders: true,
+                borderColor: '#0066cc',
+                editingBorderColor: '#0066cc',
+                lockScalingX: true,
+                lockScalingY: true
+            });
+            
+            canvas.add(editText);
+            canvas.setActiveObject(editText);
+            editText.enterEditing();
+            editText.selectAll();
+            canvas.renderAll();
+            
+            // 监听文字变化，严格限制高度
+            editText.on('changed', function() {
+                editText.initDimensions();
+                const currentHeight = editText.height;
+                
+                if (currentHeight > textAreaHeight) {
+                    editText.text = lastValidText;
+                    editText.initDimensions();
+                    editText.setSelectionStart(editText.text.length);
+                    editText.setSelectionEnd(editText.text.length);
+                    canvas.renderAll();
+                } else {
+                    lastValidText = editText.text;
+                }
+            });
+            
+            // 监听编辑结束
+            editText.on('editing:exited', function() {
+                // 更新原文字内容，保持宽度
+                textObj.set({
+                    text: editText.text,
+                    visible: true,
+                    width: bubbleWidth - padding * 2
+                });
+                textObj.initDimensions && textObj.initDimensions();
+                bubbleGroup.dirty = true;
+                canvas.remove(editText);
+                canvas.setActiveObject(bubbleGroup);
+                canvas.renderAll();
+                saveState();
+            });
+        }
+
+
+        // ==================== 右键菜单功能 ====================
+        
+        // 创建右键菜单
+        function createContextMenu() {
+            let menu = document.getElementById('contextMenu');
+            if (menu) return menu;
+            
+            menu = document.createElement('div');
+            menu.id = 'contextMenu';
+            menu.className = 'context-menu';
+            menu.innerHTML = `
+                <div class="context-menu-item" data-action="group">
+                    <i class="fas fa-object-group"></i>
+                    <span data-i18n="group">组合</span>
+                    <span class="shortcut">Ctrl+G</span>
+                </div>
+                <div class="context-menu-item" data-action="ungroup">
+                    <i class="fas fa-object-ungroup"></i>
+                    <span data-i18n="ungroup">解组</span>
+                    <span class="shortcut">Ctrl+Shift+G</span>
+                </div>
+                <div class="context-menu-divider" id="alignDivider"></div>
+                <div class="context-menu-submenu" id="alignSubmenu">
+                    <div class="context-menu-item has-submenu" data-submenu="align">
+                        <i class="fas fa-align-left"></i>
+                        <span data-i18n="align">对齐</span>
+                        <i class="fas fa-chevron-right submenu-arrow"></i>
+                    </div>
+                    <div class="context-submenu" id="alignSubmenuContent">
+                        <div class="context-menu-item" data-action="alignLeft">
+                            <i class="fas fa-align-left"></i>
+                            <span data-i18n="alignLeft">左对齐</span>
+                        </div>
+                        <div class="context-menu-item" data-action="alignCenterH">
+                            <i class="fas fa-align-center"></i>
+                            <span data-i18n="alignCenterH">水平居中</span>
+                        </div>
+                        <div class="context-menu-item" data-action="alignRight">
+                            <i class="fas fa-align-right"></i>
+                            <span data-i18n="alignRight">右对齐</span>
+                        </div>
+                        <div class="context-menu-divider"></div>
+                        <div class="context-menu-item" data-action="alignTop">
+                            <i class="fas fa-arrow-up"></i>
+                            <span data-i18n="alignTop">顶部对齐</span>
+                        </div>
+                        <div class="context-menu-item" data-action="alignCenterV">
+                            <i class="fas fa-arrows-up-down"></i>
+                            <span data-i18n="alignCenterV">垂直居中</span>
+                        </div>
+                        <div class="context-menu-item" data-action="alignBottom">
+                            <i class="fas fa-arrow-down"></i>
+                            <span data-i18n="alignBottom">底部对齐</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="context-menu-submenu" id="distributeSubmenu">
+                    <div class="context-menu-item has-submenu" data-submenu="distribute">
+                        <i class="fas fa-distribute-spacing-horizontal"></i>
+                        <span data-i18n="distribute">分布</span>
+                        <i class="fas fa-chevron-right submenu-arrow"></i>
+                    </div>
+                    <div class="context-submenu" id="distributeSubmenuContent">
+                        <div class="context-menu-item" data-action="distributeH">
+                            <i class="fas fa-arrows-left-right"></i>
+                            <span data-i18n="distributeH">水平分布</span>
+                        </div>
+                        <div class="context-menu-item" data-action="distributeV">
+                            <i class="fas fa-arrows-up-down"></i>
+                            <span data-i18n="distributeV">垂直分布</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="context-menu-divider"></div>
+                <div class="context-menu-item" data-action="duplicate">
+                    <i class="fas fa-copy"></i>
+                    <span data-i18n="duplicate">复制</span>
+                    <span class="shortcut">Ctrl+D</span>
+                </div>
+                <div class="context-menu-item" data-action="delete">
+                    <i class="fas fa-trash-alt"></i>
+                    <span data-i18n="delete">删除</span>
+                    <span class="shortcut">Del</span>
+                </div>
+                <div class="context-menu-divider"></div>
+                <div class="context-menu-item" data-action="bringToFront">
+                    <i class="fas fa-arrow-up"></i>
+                    <span data-i18n="bringToFront">置于顶层</span>
+                    <span class="shortcut">Ctrl+]</span>
+                </div>
+                <div class="context-menu-item" data-action="sendToBack">
+                    <i class="fas fa-arrow-down"></i>
+                    <span data-i18n="sendToBack">置于底层</span>
+                    <span class="shortcut">Ctrl+[</span>
+                </div>
+                <div class="context-menu-divider"></div>
+                <div class="context-menu-item" data-action="flipH">
+                    <i class="fas fa-arrows-left-right"></i>
+                    <span data-i18n="flipH">水平翻转</span>
+                </div>
+                <div class="context-menu-item" data-action="flipV">
+                    <i class="fas fa-arrows-up-down"></i>
+                    <span data-i18n="flipV">垂直翻转</span>
+                </div>
+            `;
+            document.body.appendChild(menu);
+            
+            // 绑定菜单项点击事件
+            menu.querySelectorAll('.context-menu-item:not(.has-submenu)').forEach(item => {
+                item.addEventListener('click', (e) => {
+                    const action = item.dataset.action;
+                    if (action) {
+                        handleContextMenuAction(action);
+                        hideContextMenu();
+                    }
+                });
+            });
+            
+            // 添加子菜单悬停事件
+            menu.querySelectorAll('.has-submenu').forEach(item => {
+                item.addEventListener('mouseenter', (e) => {
+                    const submenuId = item.dataset.submenu + 'SubmenuContent';
+                    const submenu = document.getElementById(submenuId);
+                    if (submenu) {
+                        menu.querySelectorAll('.context-submenu').forEach(s => s.classList.remove('show'));
+                        submenu.classList.add('show');
+                    }
+                });
+            });
+            
+            menu.querySelectorAll('.context-menu-submenu').forEach(submenu => {
+                submenu.addEventListener('mouseleave', (e) => {
+                    const content = submenu.querySelector('.context-submenu');
+                    if (content) content.classList.remove('show');
+                });
+            });
+            
+            return menu;
+        }
+        
+        // 显示右键菜单
+        function showContextMenu(x, y) {
+            let menu = document.getElementById('contextMenu');
+            if (!menu) {
+                menu = createContextMenu();
+            }
+            
+            const activeObject = canvas.getActiveObject();
+            
+            // 根据选中对象类型显示/隐藏菜单项
+            const groupItem = menu.querySelector('[data-action="group"]');
+            const ungroupItem = menu.querySelector('[data-action="ungroup"]');
+            const alignSubmenu = document.getElementById('alignSubmenu');
+            const distributeSubmenu = document.getElementById('distributeSubmenu');
+            const alignDivider = document.getElementById('alignDivider');
+            
+            if (activeObject) {
+                if (activeObject.type === 'activeSelection') {
+                    groupItem.style.display = 'flex';
+                    ungroupItem.style.display = 'none';
+                    alignSubmenu.style.display = 'block';
+                    alignDivider.style.display = 'block';
+                    const objectCount = activeObject.getObjects().length;
+                    distributeSubmenu.style.display = objectCount >= 3 ? 'block' : 'none';
+                } else if (activeObject.type === 'group') {
+                    groupItem.style.display = 'none';
+                    ungroupItem.style.display = 'flex';
+                    alignSubmenu.style.display = 'none';
+                    distributeSubmenu.style.display = 'none';
+                    alignDivider.style.display = 'none';
+                } else {
+                    groupItem.style.display = 'none';
+                    ungroupItem.style.display = 'none';
+                    alignSubmenu.style.display = 'none';
+                    distributeSubmenu.style.display = 'none';
+                    alignDivider.style.display = 'none';
+                }
+            }
+            
+            // 关闭所有子菜单
+            menu.querySelectorAll('.context-submenu').forEach(s => s.classList.remove('show'));
+            
+            // 更新多语言
+            if (typeof I18n !== 'undefined') {
+                I18n.updateUI();
+            }
+            
+            // 计算菜单位置
+            menu.style.visibility = 'hidden';
+            menu.style.left = '0px';
+            menu.style.top = '0px';
+            menu.classList.add('show');
+            
+            const rect = menu.getBoundingClientRect();
+            const menuWidth = rect.width;
+            const menuHeight = rect.height;
+            
+            let finalX = x;
+            let finalY = y;
+            
+            if (x + menuWidth > window.innerWidth - 10) {
+                finalX = x - menuWidth;
+                if (finalX < 10) finalX = 10;
+            }
+            
+            if (y + menuHeight > window.innerHeight - 10) {
+                finalY = y - menuHeight;
+                if (finalY < 10) finalY = 10;
+            }
+            
+            menu.style.left = finalX + 'px';
+            menu.style.top = finalY + 'px';
+            menu.style.visibility = 'visible';
+        }
+        
+        // 隐藏右键菜单
+        function hideContextMenu() {
+            const menu = document.getElementById('contextMenu');
+            if (menu) {
+                menu.classList.remove('show');
+            }
+        }
+        
+        // 处理右键菜单操作
+        function handleContextMenuAction(action) {
+            switch (action) {
+                case 'group':
+                    groupSelected();
+                    break;
+                case 'ungroup':
+                    ungroupSelected();
+                    break;
+                case 'duplicate':
+                    duplicateObject();
+                    break;
+                case 'delete':
+                    deleteSelected();
+                    break;
+                case 'bringToFront':
+                    bringToFront();
+                    break;
+                case 'sendToBack':
+                    sendToBack();
+                    break;
+                case 'flipH':
+                    flipHorizontal();
+                    break;
+                case 'flipV':
+                    flipVertical();
+                    break;
+                case 'alignLeft':
+                    alignLeft();
+                    break;
+                case 'alignCenterH':
+                    alignCenterH();
+                    break;
+                case 'alignRight':
+                    alignRight();
+                    break;
+                case 'alignTop':
+                    alignTop();
+                    break;
+                case 'alignCenterV':
+                    alignCenterV();
+                    break;
+                case 'alignBottom':
+                    alignBottom();
+                    break;
+                case 'distributeH':
+                    distributeH();
+                    break;
+                case 'distributeV':
+                    distributeV();
+                    break;
+            }
+        }
+        
+        // 绑定右键菜单事件 - 使用原生DOM事件确保可靠触发
+        document.getElementById('canvasContainer').addEventListener('contextmenu', function(e) {
+            e.preventDefault();
+            e.stopPropagation();
+            
+            hideContextMenu();
+            const activeObject = canvas.getActiveObject();
+            if (activeObject) {
+                showContextMenu(e.clientX, e.clientY);
+            }
+            return false;
+        });
+        
+        // 点击其他地方关闭右键菜单
+        document.addEventListener('click', (e) => {
+            const menu = document.getElementById('contextMenu');
+            if (menu && !menu.contains(e.target)) {
+                hideContextMenu();
+            }
+        });
+        
+        // 滚动时关闭右键菜单
+        document.addEventListener('scroll', hideContextMenu);
+        canvas.on('mouse:wheel', hideContextMenu);
+
+
+        // ==================== 组合/解组/复制功能 ====================
+        
+        // 禁止 ActiveSelection 旋转
+        function disableActiveSelectionRotation(activeSelection) {
+            if (!activeSelection) return;
+            activeSelection.set({
+                hasRotatingPoint: false,
+                lockRotation: true
+            });
+            activeSelection.setControlsVisibility({
+                mtr: false
+            });
+        }
+        
+        // 组合选中对象
+        function groupSelected() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'activeSelection') {
+                showToast('请先选择多个对象');
+                return;
+            }
+            
+            const objects = activeObject.getObjects();
+            if (objects.length < 2) {
+                showToast('至少需要选择两个对象');
+                return;
+            }
+            
+            // 记录选区的中心点和变换信息
+            const selectionCenter = activeObject.getCenterPoint();
+            const selectionAngle = activeObject.angle || 0;
+            
+            // 使用toGroup转换
+            const group = activeObject.toGroup();
+            
+            // 确保组的位置正确
+            group.set({
+                cornerColor: '#0066cc',
+                cornerStyle: 'circle',
+                borderColor: '#0066cc',
+                cornerSize: 10,
+                transparentCorners: false,
+                selectable: true,
+                evented: true
+            });
+            
+            group.setCoords();
+            canvas.setActiveObject(group);
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ 已组合');
+        }
+        
+        // 解组选中对象
+        function ungroupSelected() {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'group') {
+                showToast('请先选择一个组');
+                return;
+            }
+            
+            // 如果是容器化的 Group，使用特殊解组
+            if (activeObject._isContainerGroup) {
+                releaseFromLayout(activeObject);
+                return;
+            }
+            
+            // 获取组的变换矩阵
+            const groupMatrix = activeObject.calcTransformMatrix();
+            
+            // 获取组内所有对象
+            const items = activeObject._objects.slice();
+            
+            // 计算每个对象在画布中的绝对变换
+            const itemsAbsolute = items.map(item => {
+                // 获取对象相对于组的变换矩阵
+                const itemMatrix = item.calcTransformMatrix();
+                // 组合变换矩阵得到绝对变换
+                const absoluteMatrix = fabric.util.multiplyTransformMatrices(groupMatrix, [
+                    item.scaleX || 1, 0, 0, item.scaleY || 1, item.left, item.top
+                ]);
+                
+                // 从矩阵中提取位置
+                const point = fabric.util.transformPoint({ x: 0, y: 0 }, absoluteMatrix);
+                
+                return {
+                    item: item,
+                    left: point.x,
+                    top: point.y,
+                    scaleX: (item.scaleX || 1) * (activeObject.scaleX || 1),
+                    scaleY: (item.scaleY || 1) * (activeObject.scaleY || 1),
+                    angle: (item.angle || 0) + (activeObject.angle || 0)
+                };
+            });
+            
+            // 从画布移除组
+            canvas.remove(activeObject);
+            
+            // 将对象添加回画布，使用绝对位置
+            const newObjects = [];
+            itemsAbsolute.forEach(data => {
+                const obj = data.item;
+                obj.set({
+                    left: data.left,
+                    top: data.top,
+                    scaleX: data.scaleX,
+                    scaleY: data.scaleY,
+                    angle: data.angle,
+                    selectable: true,
+                    evented: true
+                });
+                obj.setCoords();
+                canvas.add(obj);
+                newObjects.push(obj);
+            });
+            
+            // 创建新的选区
+            if (newObjects.length > 0) {
+                const selection = new fabric.ActiveSelection(newObjects, { canvas: canvas });
+                disableActiveSelectionRotation(selection);
+                canvas.setActiveObject(selection);
+            }
+            
+            canvas.requestRenderAll();
+            saveState();
+            showToast('✓ 已解组');
+        }
+        
+        // 复制选中对象
+        function duplicateObject() {
+            const obj = canvas.getActiveObject();
+            if (!obj) {
+                showToast('请先选择对象');
+                return;
+            }
+            
+            obj.clone(function(cloned) {
+                cloned.set({
+                    left: cloned.left + 20,
+                    top: cloned.top + 20,
+                    evented: true
+                });
+                
+                if (cloned.type === 'activeSelection') {
+                    cloned.canvas = canvas;
+                    cloned.forEachObject(function(o) {
+                        canvas.add(o);
+                    });
+                    disableActiveSelectionRotation(cloned);
+                    canvas.setActiveObject(cloned);
+                } else {
+                    canvas.add(cloned);
+                    canvas.setActiveObject(cloned);
+                }
+                
+                canvas.requestRenderAll();
+                saveState();
+                showToast('✓ 已复制');
+            });
+        }
+
+
+        // ==================== 用户体验优化函数 ====================
+        
+        // 显示加载指示器
+        function showLoading(text) {
+            const overlay = document.getElementById('loadingOverlay');
+            const textEl = overlay?.querySelector('.loading-spinner-text');
+            if (textEl && text) {
+                textEl.textContent = text;
+            }
+            overlay?.classList.add('show');
+        }
+        
+        // 隐藏加载指示器
+        function hideLoading() {
+            document.getElementById('loadingOverlay')?.classList.remove('show');
+        }
+        
+        // 显示首次操作提示
+        let firstImageAdded = false;
+        function showFirstActionTip() {
+            if (firstImageAdded) return;
+            firstImageAdded = true;
+            
+            // 检查是否是首次添加图片
+            if (localStorage.getItem('firstActionTipShown')) return;
+            
+            const tip = document.getElementById('firstActionTip');
+            if (!tip) return;
+            
+            tip.classList.add('show');
+            
+            // 3秒后自动隐藏
+            setTimeout(() => {
+                tip.classList.remove('show');
+                localStorage.setItem('firstActionTipShown', 'true');
+            }, 4000);
+        }
+        
+        // 显示工具反馈提示
+        function showToolFeedback(message) {
+            const feedback = document.getElementById('toolFeedback');
+            const textEl = document.getElementById('toolFeedbackText');
+            if (!feedback || !textEl) return;
+            
+            textEl.textContent = message;
+            feedback.classList.add('show');
+            
+            setTimeout(() => {
+                feedback.classList.remove('show');
+            }, 2500);
+        }
+        
+        // 检查是否需要选中图片才能使用工具
+        function checkImageSelected(toolName) {
+            const activeObject = canvas.getActiveObject();
+            if (!activeObject || activeObject.type !== 'image') {
+                const msg = I18n?.t('tipSelectFirst') || 'Please select an image first';
+                showToolFeedback(msg);
+                return false;
+            }
+            return true;
+        }
+        
+        // 暴露函数到全局
+        window.showLoading = showLoading;
+        window.hideLoading = hideLoading;
+        window.showFirstActionTip = showFirstActionTip;
+        window.showToolFeedback = showToolFeedback;
+        window.checkImageSelected = checkImageSelected;
+
+
+        // ==================== macOS 适配 ====================
+        
+        // 检测是否为 macOS
+        const isMac = navigator.platform.toUpperCase().indexOf('MAC') >= 0 || 
+                      navigator.userAgent.toUpperCase().indexOf('MAC') >= 0;
+        
+        // 获取适合当前平台的修饰键符号
+        function getModKey() {
+            return isMac ? '⌘' : 'Ctrl';
+        }
+        
+        // 更新页面上的快捷键提示
+        function updateShortcutHints() {
+            // 更新 data-shortcut 属性
+            document.querySelectorAll('[data-shortcut]').forEach(el => {
+                let shortcut = el.getAttribute('data-shortcut');
+                if (isMac) {
+                    shortcut = shortcut.replace(/Ctrl\+/g, '⌘');
+                    shortcut = shortcut.replace(/⌘V\/Ctrl\+V/g, '⌘V');
+                } else {
+                    shortcut = shortcut.replace(/⌘/g, 'Ctrl+');
+                    shortcut = shortcut.replace(/⌘V\/Ctrl\+V/g, 'Ctrl+V');
+                }
+                el.setAttribute('data-shortcut', shortcut);
+            });
+        }
+        
+        // 页面加载后更新快捷键提示
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', updateShortcutHints);
+        } else {
+            updateShortcutHints();
+        }
+        
+        // 暴露到全局
+        window.isMac = isMac;
+        window.getModKey = getModKey;

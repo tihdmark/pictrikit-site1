@@ -1,19 +1,19 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
     
     <!-- SEO Meta Tags -->
-    <title>截图拼接工具 | PictriKit</title>
-    <meta name="description" content="简洁的图片处理工具，支持拼接、裁剪、标注、马赛克等功能。无需注册，傻瓜式页面。">
-    <meta name="keywords" content="截图拼接, 图片拼接, UI设计, 素材拼接, 在线拼图, screenshot stitch, image merge">
+    <title>Screenshot Stitching Tool | PictriKit</title>
+    <meta name="description" content="Free online image editing tool. Supports stitching, cropping, annotation, blur and more. No registration required.">
+    <meta name="keywords" content="screenshot stitch, image merge, UI design, screenshot combine, image editing">
     <link rel="canonical" href="https://pictrikit.com/app.html">
     
     <!-- Open Graph Meta Tags -->
     <meta property="og:type" content="website">
-    <meta property="og:title" content="截图拼接工具 | PictriKit">
-    <meta property="og:description" content="简洁的图片处理工具，支持拼接、裁剪、标注、马赛克等功能。">
+    <meta property="og:title" content="Screenshot Stitching Tool | PictriKit">
+    <meta property="og:description" content="Free online image editing tool. Supports stitching, cropping, annotation, blur and more.">
     <meta property="og:image" content="https://pictrikit.com/assets/images/og-image.png">
     <meta property="og:url" content="https://pictrikit.com/app.html">
     <meta property="og:site_name" content="PictriKit">
@@ -24,8 +24,8 @@
     
     <!-- Twitter Card Meta Tags -->
     <meta name="twitter:card" content="summary_large_image">
-    <meta name="twitter:title" content="截图拼接工具 | PictriKit">
-    <meta name="twitter:description" content="简洁的图片处理工具，支持拼接、裁剪、标注、马赛克等功能。">
+    <meta name="twitter:title" content="Screenshot Stitching Tool | PictriKit">
+    <meta name="twitter:description" content="Free online image editing tool. Supports stitching, cropping, annotation, blur and more.">
     <meta name="twitter:image" content="https://pictrikit.com/assets/images/og-image.png">
     <meta name="twitter:creator" content="@pictrikit">
     <meta name="twitter:site" content="@pictrikit">
@@ -43,7 +43,7 @@
       "@context": "https://schema.org",
       "@type": "WebApplication",
       "name": "PictriKit",
-      "description": "简洁的图片处理工具，支持拼接、裁剪、标注、马赛克等功能。",
+      "description": "Free online screenshot combining and editing tool. Supports stitching, cropping, annotation, blur and more.",
       "url": "https://pictrikit.com/app.html",
       "applicationCategory": "DesignApplication",
       "operatingSystem": "Any",
@@ -54,14 +54,14 @@
         "priceCurrency": "USD"
       },
       "featureList": [
-        "截图拼接",
-        "裁剪",
-        "标注",
-        "马赛克",
-        "画笔",
-        "形状",
-        "图标",
-        "导出PNG/JPG/PDF"
+        "Screenshot stitching",
+        "Image cropping",
+        "Text annotation",
+        "Privacy blur",
+        "Drawing tools",
+        "Shape tools",
+        "Icon library",
+        "Export PNG/JPG/PDF"
       ],
       "screenshot": "https://pictrikit.com/assets/images/screenshot.png"
     }
@@ -103,7 +103,7 @@
         {
           "@type": "HowToStep",
           "name": "Upload Screenshots",
-          "text": "Click the upload button or drag and drop your screenshots onto the canvas. You can also paste images with Ctrl+V.",
+          "text": "Click the upload button or drag and drop your screenshots onto the canvas. You can also paste images with ⌘V (Mac) or Ctrl+V (Windows).",
           "image": "https://pictrikit.com/assets/images/step1.png"
         },
         {
@@ -139,7 +139,7 @@
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@simonwep/pickr/dist/themes/nano.min.css">
     
     <!-- Critical JavaScript - fabric.js must load before app.js -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/4.5.0/fabric.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.2.4/fabric.min.js"></script>
     
     <!-- Defer non-critical JavaScript -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js" defer></script>
@@ -161,9 +161,31 @@
     <link rel="dns-prefetch" href="https://cdn.jsdelivr.net">
 </head>
 <body data-page="app">
+    <!-- 加载指示器 - 默认显示 -->
+    <div class="loading-overlay show" id="loadingOverlay">
+        <div class="loading-spinner">
+            <div class="loading-spinner-icon"></div>
+            <div class="loading-spinner-text" data-i18n="loadingProcessing">Loading...</div>
+        </div>
+    </div>
+    
+    <!-- 首次操作提示 -->
+    <div class="first-action-tip" id="firstActionTip">
+        <div class="first-action-tip-content">
+            <i class="fas fa-lightbulb"></i>
+            <span data-i18n="tipFirstImage">Drag to adjust position, or add more screenshots</span>
+        </div>
+    </div>
+    
+    <!-- 工具状态反馈 -->
+    <div class="tool-feedback" id="toolFeedback">
+        <i class="fas fa-info-circle"></i>
+        <span id="toolFeedbackText"></span>
+    </div>
+    
     <div class="app">
         <div class="top-toolbar" role="banner">
-            <a href="/index.html" class="logo" title="Return to Home" style="text-decoration: none; color: inherit; cursor: pointer;">
+            <a href="/index.html" class="logo" style="text-decoration: none; color: inherit; cursor: pointer;">
                 <i class="fas fa-layer-group" aria-hidden="true"></i>
                 <span class="logo-text">PictriKit</span>
             </a>
@@ -178,13 +200,13 @@
                             <span>EN</span><span>English</span>
                         </div>
                         <div class="lang-option" data-lang="zh-CN" onclick="changeLanguage(event, 'zh-CN')">
-                            <span>CN</span><span>Chinese</span>
+                            <span>中</span><span>简体中文</span>
                         </div>
                         <div class="lang-option" data-lang="ja" onclick="changeLanguage(event, 'ja')">
-                            <span>JP</span><span>Japanese</span>
+                            <span>日</span><span>日本語</span>
                         </div>
                         <div class="lang-option" data-lang="ko" onclick="changeLanguage(event, 'ko')">
-                            <span>KR</span><span>Korean</span>
+                            <span>한</span><span>한국어</span>
                         </div>
                     </div>
                 </div>
@@ -212,10 +234,10 @@
         <!-- Anime-style Bookmark Bubble -->
         <div id="bookmarkBubble" class="bookmark-bubble" role="dialog" aria-labelledby="bubbleTitle" aria-describedby="bubbleDesc" style="display: none;">
             <button class="bubble-close" onclick="closeBookmarkBubble()" aria-label="Close bookmark tip" tabindex="0">
-                <span aria-hidden="true">✕</span>
+                <span aria-hidden="true">?</span>
             </button>
             <div class="bubble-content">
-                <div class="bubble-icon">💫</div>
+                <div class="bubble-icon"><i class="fas fa-star" style="color: #f0c000;"></i></div>
                 <p id="bubbleTitle" class="bubble-title">Save for Later!</p>
                 <p id="bubbleDesc" class="bubble-text">Bookmark this page to find it easily next time~</p>
             </div>
@@ -225,85 +247,101 @@
         <div class="main-content" role="main"></main>
             <div class="sidebar" id="sidebar" role="complementary" aria-label="Tools">
                 <div class="sidebar-tools">
-                    <!-- 文件操作组 -->
+                    <!-- �ļ������� -->
                     <div class="tool-group">
-                        <button class="tool-btn" onclick="triggerUpload()" aria-label="Upload images" data-tooltip="Upload">
+                        <button class="tool-btn" onclick="triggerUpload()" aria-label="Upload images" data-shortcut="⌘V/Ctrl+V">
                             <i class="fas fa-folder-open" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="upload">Upload</span>
                         </button>
                     </div>
                     
-                    <!-- 对齐工具组 -->
+                    <!-- ���빤���� -->
                     <div class="tool-group">
-                        <button class="tool-btn active" id="snapToggle" onclick="toggleSnap()" aria-label="Toggle smart align" aria-pressed="true" data-tooltip="Smart Align">
+                        <button class="tool-btn active" id="snapToggle" onclick="toggleSnap()" aria-label="Toggle smart align" aria-pressed="true" data-shortcut="Smart">
                             <i class="fas fa-magnet" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="snap">Align</span>
                         </button>
                     </div>
                     
-                    <!-- 复位操作组 -->
+                    <!-- ��ͼ�ͱ�ע������ -->
                     <div class="tool-group">
-                        <button class="tool-btn" onclick="centerSelected()" aria-label="Center selected" data-tooltip="Center (C)">
-                            <i class="fas fa-crosshairs" aria-hidden="true"></i>
-                        </button>
-                    </div>
-                    
-                    <!-- 绘图和标注工具组 -->
-                    <div class="tool-group">
-                        <button class="tool-btn" id="drawToggle" onclick="toggleDraw()" aria-label="Toggle draw mode" aria-pressed="false" data-tooltip="Draw">
+                        <button class="tool-btn" id="drawToggle" onclick="toggleDraw()" aria-label="Toggle draw mode" aria-pressed="false" data-shortcut="Draw">
                             <i class="fas fa-paintbrush" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="draw">Draw</span>
                         </button>
-                        <button class="tool-btn" onclick="addText()" aria-label="Add text" data-tooltip="Text">
+                        <button class="tool-btn" onclick="addText()" aria-label="Add text" data-shortcut="T">
                             <i class="fas fa-font" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="text">Text</span>
                         </button>
-                        <button class="tool-btn" onclick="openIconsModal()" aria-label="Design Icons" data-tooltip="Icons">
+                        <button class="tool-btn" onclick="openIconsModal()" aria-label="Design Icons" data-shortcut="Icons">
                             <i class="fas fa-icons" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="icons">Icons</span>
                         </button>
-                        <button class="tool-btn" id="shapeToggle" onclick="toggleShapePanel()" aria-label="Add shape" data-tooltip="Shapes">
+                        <button class="tool-btn" id="shapeToggle" onclick="toggleShapePanel()" aria-label="Add shape" data-shortcut="Shapes">
                             <i class="fas fa-shapes" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="shapes">Shapes</span>
+                        </button>
+                        <button class="tool-btn" onclick="addSpeechBubble()" aria-label="Add speech bubble" data-shortcut="Bubble">
+                            <i class="fas fa-comment" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="bubble">Bubble</span>
+                        </button>
+                        <button class="tool-btn" onclick="openLayoutModal()" aria-label="Layout templates" data-shortcut="Layout">
+                            <i class="fas fa-table-cells-large" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="layout">Layout</span>
                         </button>
                     </div>
                     
-                    <!-- 图片编辑工具组 -->
+                    <!-- ͼƬ�༭������ -->
                     <div class="tool-group">
-                        <button class="tool-btn" id="cropToggle" onclick="toggleCrop()" aria-label="Crop image" disabled data-tooltip="Crop">
+                        <button class="tool-btn" id="cropToggle" onclick="toggleCrop()" aria-label="Crop image" disabled data-shortcut="K">
                             <i class="fas fa-crop-simple" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="crop">Crop</span>
                         </button>
-                        <button class="tool-btn" id="blurToggle" onclick="toggleBlur()" aria-label="Blur image" disabled data-tooltip="Blur">
+                        <button class="tool-btn" id="blurToggle" onclick="toggleBlur()" aria-label="Blur image" disabled data-shortcut="Blur">
                             <i class="fas fa-droplet" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="blur">Blur</span>
                         </button>
-                        <button class="tool-btn" id="pixelateToggle" onclick="togglePixelate()" aria-label="Pixelate image" disabled data-tooltip="Pixelate">
+                        <button class="tool-btn" id="pixelateToggle" onclick="togglePixelate()" aria-label="Pixelate image" disabled data-shortcut="Mosaic">
                             <i class="fas fa-th" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="pixelate">Mosaic</span>
                         </button>
-                        <button class="tool-btn" onclick="flipHorizontal()" aria-label="Flip horizontal" data-tooltip="Flip H">
+                        <button class="tool-btn" onclick="flipHorizontal()" aria-label="Flip horizontal" data-shortcut="Flip H">
                             <i class="fas fa-arrows-left-right" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="flipH">Flip H</span>
                         </button>
-                        <button class="tool-btn" onclick="flipVertical()" aria-label="Flip vertical" data-tooltip="Flip V">
+                        <button class="tool-btn" onclick="flipVertical()" aria-label="Flip vertical" data-shortcut="Flip V">
                             <i class="fas fa-arrows-up-down" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="flipV">Flip V</span>
                         </button>
                     </div>
                     
                     <!-- 历史操作组 -->
                     <div class="tool-group">
-                        <button class="tool-btn" onclick="undo()" aria-label="Undo" data-tooltip="Undo">
+                        <button class="tool-btn" onclick="undo()" aria-label="Undo" data-shortcut="⌘Z/Ctrl+Z">
                             <i class="fas fa-rotate-left" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="undo">Undo</span>
                         </button>
-                        <button class="tool-btn" onclick="redo()" aria-label="Redo" data-tooltip="Redo">
+                        <button class="tool-btn" onclick="redo()" aria-label="Redo" data-shortcut="⌘Y/Ctrl+Y">
                             <i class="fas fa-rotate-right" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="redo">Redo</span>
                         </button>
                     </div>
                     
                     <!-- 删除操作组 -->
                     <div class="tool-group">
-                        <button class="tool-btn" onclick="deleteSelected()" aria-label="Delete selected" data-tooltip="Delete">
+                        <button class="tool-btn" onclick="deleteSelected()" aria-label="Delete selected" data-shortcut="Del">
                             <i class="fas fa-trash-alt" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="delete">Delete</span>
                         </button>
-                        <button class="tool-btn" onclick="clearAll()" aria-label="Clear all" data-tooltip="Clear">
+                        <button class="tool-btn" onclick="clearAll()" aria-label="Clear all" data-shortcut="Clear">
                             <i class="fas fa-broom" aria-hidden="true"></i>
+                            <span class="tool-label" data-i18n="clear">Clear</span>
                         </button>
                     </div>
                 </div>
             </div>
 
-            <!-- 移动端悬浮工具按钮 -->
+            <!-- 移动端工具栏按钮 -->
             <button class="sidebar-fab" onclick="toggleMobileToolbar()">
                 <i class="fas fa-magic"></i>
             </button>
@@ -327,6 +365,12 @@
                 </button>
                 <button class="mobile-tool-btn" onclick="openSettingsModal('shape'); toggleMobileToolbar();">
                     <i class="fas fa-shapes"></i>
+                </button>
+                <button class="mobile-tool-btn" onclick="openSettingsModal('bubble'); toggleMobileToolbar();">
+                    <i class="fas fa-comment-dots"></i>
+                </button>
+                <button class="mobile-tool-btn" onclick="openSettingsModal('layout'); toggleMobileToolbar();">
+                    <i class="fas fa-th-large"></i>
                 </button>
                 <div class="mobile-tool-divider"></div>
                 <button class="mobile-tool-btn" id="cropToggleMobile" onclick="toggleCropMobile()" disabled>
@@ -377,6 +421,13 @@
                         </div>
                         <h3 data-i18n="emptyTitle">Start Combining Screenshots</h3>
                         <p data-i18n="emptyDesc">Upload • Drag & Drop • Ctrl+V Paste</p>
+                        <div class="empty-state-hint">
+                            <span class="hint-badge"><i class="fas fa-keyboard"></i> <span data-i18n="emptyHint">Try pressing Ctrl+V to paste a screenshot</span></span>
+                        </div>
+                        <div class="empty-state-privacy">
+                            <i class="fas fa-shield-alt"></i>
+                            <span data-i18n="emptyPrivacy">All processing happens locally. Your images never leave your device.</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -393,10 +444,10 @@
                             <div class="settings-group">
                                 <label class="settings-label">Background Type</label>
                                 <div class="icon-btn-group">
-                                    <button class="icon-btn" onclick="setBgTransparent()" title="Transparent">
+                                    <button class="icon-btn" onclick="setBgTransparent()">
                                         <i class="fas fa-border-none"></i>
                                     </button>
-                                    <button class="icon-btn bg-color-btn" id="bgColorBtn" onclick="openBgColorPicker()" title="Color">
+                                    <button class="icon-btn bg-color-btn" id="bgColorBtn" onclick="openBgColorPicker()">
                                         <div class="pickr" id="bgColorPicker"></div>
                                     </button>
                                 </div>
@@ -416,16 +467,16 @@
                             <div class="settings-group">
                                 <label class="settings-label">Add Shape</label>
                                 <div class="icon-btn-group">
-                                    <button class="icon-btn" onclick="addRectangle()" title="Rectangle">
+                                    <button class="icon-btn" onclick="addRectangle()">
                                         <i class="fas fa-square"></i>
                                     </button>
-                                    <button class="icon-btn" onclick="addCircle()" title="Circle">
+                                    <button class="icon-btn" onclick="addCircle()">
                                         <i class="fas fa-circle"></i>
                                     </button>
-                                    <button class="icon-btn" onclick="addLine()" title="Line">
+                                    <button class="icon-btn" onclick="addLine()">
                                         <i class="fas fa-minus"></i>
                                     </button>
-                                    <button class="icon-btn" onclick="addArrow()" title="Arrow">
+                                    <button class="icon-btn" onclick="addArrow()">
                                         <i class="fas fa-arrow-right"></i>
                                     </button>
                                 </div>
@@ -486,7 +537,7 @@
                                         <option value="Comic Sans MS">Comic Sans</option>
                                         <option value="Impact">Impact</option>
                                         <option value="Trebuchet MS">Trebuchet</option>
-                                        <option value="Microsoft YaHei">微软雅黑</option>
+                                        <option value="Microsoft YaHei">΢���ź�</option>
                                     </select>
                                 </div>
                             </div>
@@ -505,13 +556,13 @@
                             <div class="settings-group">
                                 <label class="settings-label">Alignment</label>
                                 <div class="icon-btn-group">
-                                    <button class="icon-btn" onclick="updateTextAlign('left')" title="Left">
+                                    <button class="icon-btn" onclick="updateTextAlign('left')">
                                         <i class="fas fa-align-left"></i>
                                     </button>
-                                    <button class="icon-btn" onclick="updateTextAlign('center')" title="Center">
+                                    <button class="icon-btn" onclick="updateTextAlign('center')">
                                         <i class="fas fa-align-center"></i>
                                     </button>
-                                    <button class="icon-btn" onclick="updateTextAlign('right')" title="Right">
+                                    <button class="icon-btn" onclick="updateTextAlign('right')">
                                         <i class="fas fa-align-right"></i>
                                     </button>
                                 </div>
@@ -534,49 +585,11 @@
                         </div>
                     </div>
                 </div>
-
-                <div class="panel-section">
-                    <button class="drawer-trigger" id="layerDrawerTrigger" onclick="openSettingsModal('layer')">
-                        <span><i class="fas fa-layer-group"></i> <span data-i18n="layerSettings">Layer Order</span></span>
-                        <i class="fas fa-chevron-right"></i>
-                    </button>
-                    
-                    <div class="drawer-content" id="layerDrawer">
-                        <div class="drawer-inner">
-                            <div class="settings-group">
-                                <label class="settings-label">Layer Control</label>
-                                <div class="icon-btn-group">
-                                    <button class="icon-btn" onclick="bringToFront()" title="Bring to Front">
-                                        <i class="fas fa-arrow-up"></i>
-                                    </button>
-                                    <button class="icon-btn" onclick="bringForward()" title="Bring Forward">
-                                        <i class="fas fa-chevron-up"></i>
-                                    </button>
-                                    <button class="icon-btn" onclick="sendBackward()" title="Send Backward">
-                                        <i class="fas fa-chevron-down"></i>
-                                    </button>
-                                    <button class="icon-btn" onclick="sendToBack()" title="Send to Back">
-                                        <i class="fas fa-arrow-down"></i>
-                                    </button>
-                                </div>
-                            </div>
-                            
-                            <div class="settings-group">
-                                <label class="settings-label">Lock Layer</label>
-                                <div class="icon-btn-group">
-                                    <button class="icon-btn" onclick="toggleLock()" title="Lock/Unlock" id="lockBtn">
-                                        <i class="fas fa-lock-open"></i>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
 
         <div class="footer" role="contentinfo">
-            <span>© 2025 PictriKit. All rights reserved.</span>
+            <span>&copy; 2025 PictriKit. All rights reserved.</span>
         </div>
     </div>
 
@@ -650,7 +663,7 @@
                         <option value="Georgia">Georgia</option>
                         <option value="Verdana">Verdana</option>
                         <option value="Impact">Impact</option>
-                        <option value="Microsoft YaHei">微软雅黑</option>
+                        <option value="Microsoft YaHei">΢���ź�</option>
                     </select>
                 </div>
                 <div>
@@ -741,7 +754,7 @@
                 <i class="fas fa-icons"></i> 
                 <span data-i18n="icons">Design Icons</span>
             </h3>
-            <!-- 颜色和大小选择 -->
+            <!-- ��ɫ�ʹ�Сѡ�� -->
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
                 <div>
                     <label style="font-size: 13px; font-weight: 600; color: var(--text-secondary); display: block; margin-bottom: 8px;">Color:</label>
@@ -786,13 +799,145 @@
                 <i class="fas fa-times"></i>
             </button>
             <div class="settings-modal-body" id="settingsModalBody">
-                <!-- 设置内容将动态加载到这里 -->
+                <!-- �������ݽ���̬���ص����� -->
             </div>
         </div>
     </div>
 
-    <!-- Load i18n first, then main app -->
+    <!-- Layout/Template Modal -->
+    <div class="share-modal" id="layoutModal" onclick="closeLayoutModal()">
+        <div class="share-content" onclick="event.stopPropagation()" style="max-width: 600px;">
+            <h3 style="margin-bottom: 16px;">
+                <i class="fas fa-table-cells-large"></i> 
+                <span data-i18n="layout">Layout</span>
+            </h3>
+            
+            <!-- 使用提示 -->
+            <div style="background: var(--bg-secondary); border-radius: 8px; padding: 12px 16px; margin-bottom: 20px; font-size: 13px; color: var(--text-secondary);">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 8px;">
+                    <i class="fas fa-lightbulb" style="color: #f0c000;"></i>
+                    <strong data-i18n="layoutTipTitle">How to use templates</strong>
+                </div>
+                <ul style="margin: 0; padding-left: 20px; line-height: 1.6;">
+                    <li data-i18n="layoutTip1">Click a template to add it to canvas</li>
+                    <li data-i18n="layoutTip2">Right-click to ungroup and edit individual elements</li>
+                    <li data-i18n="layoutTip3">Double-click text to edit content</li>
+                </ul>
+            </div>
+            
+            <!-- 画布尺寸预设 -->
+            <div style="margin-bottom: 20px;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px;" data-i18n="canvasPresets">Canvas Presets</div>
+                <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px;">
+                    <button class="layout-preset-btn" onclick="applyCanvasPreset(1920, 1080)">
+                        <i class="fas fa-desktop"></i>
+                        <span>16:9</span>
+                    </button>
+                    <button class="layout-preset-btn" onclick="applyCanvasPreset(1080, 1080)">
+                        <i class="fas fa-square"></i>
+                        <span>1:1</span>
+                    </button>
+                    <button class="layout-preset-btn" onclick="applyCanvasPreset(1080, 1920)">
+                        <i class="fas fa-mobile-alt"></i>
+                        <span>9:16</span>
+                    </button>
+                    <button class="layout-preset-btn" onclick="applyCanvasPreset(1200, 630)">
+                        <i class="fas fa-share-nodes"></i>
+                        <span>OG</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- ���ֹǼ� -->
+            <div style="margin-bottom: 20px;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px;" data-i18n="layoutStructure">Layout Structure</div>
+                <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px;">
+                    <button class="layout-structure-btn" onclick="insertLayoutStructure('center')">
+                        <div class="layout-preview layout-center">
+                            <div class="layout-block"></div>
+                        </div>
+                        <span data-i18n="layoutCenter">Center</span>
+                    </button>
+                    <button class="layout-structure-btn" onclick="insertLayoutStructure('leftRight')">
+                        <div class="layout-preview layout-lr">
+                            <div class="layout-block"></div>
+                            <div class="layout-block"></div>
+                        </div>
+                        <span data-i18n="layoutLeftRight">L-R</span>
+                    </button>
+                    <button class="layout-structure-btn" onclick="insertLayoutStructure('topBottom')">
+                        <div class="layout-preview layout-tb">
+                            <div class="layout-block"></div>
+                            <div class="layout-block"></div>
+                        </div>
+                        <span data-i18n="layoutTopBottom">T-B</span>
+                    </button>
+                    <button class="layout-structure-btn" onclick="insertLayoutStructure('threeCol')">
+                        <div class="layout-preview layout-3col">
+                            <div class="layout-block"></div>
+                            <div class="layout-block"></div>
+                            <div class="layout-block"></div>
+                        </div>
+                        <span data-i18n="layoutThreeCol">3-Col</span>
+                    </button>
+                    <button class="layout-structure-btn" onclick="insertLayoutStructure('grid2x2')">
+                        <div class="layout-preview layout-grid">
+                            <div class="layout-block"></div>
+                            <div class="layout-block"></div>
+                            <div class="layout-block"></div>
+                            <div class="layout-block"></div>
+                        </div>
+                        <span data-i18n="layoutGrid">Grid</span>
+                    </button>
+                    <button class="layout-structure-btn" onclick="insertLayoutStructure('sidebar')">
+                        <div class="layout-preview layout-sidebar">
+                            <div class="layout-block" style="flex: 1;"></div>
+                            <div class="layout-block" style="flex: 2;"></div>
+                        </div>
+                        <span data-i18n="layoutSidebar">Sidebar</span>
+                    </button>
+                </div>
+            </div>
+            
+            <!-- 组件模板 -->
+            <div style="margin-bottom: 16px;">
+                <div style="font-size: 13px; font-weight: 600; color: var(--text-secondary); margin-bottom: 10px;" data-i18n="componentTemplates">Component Templates</div>
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <button class="layout-template-btn" onclick="insertTemplate('titleSubtitle')">
+                        <i class="fas fa-heading"></i>
+                        <span data-i18n="templateTitleSubtitle">Title + Subtitle</span>
+                    </button>
+                    <button class="layout-template-btn" onclick="insertTemplate('imageCaption')">
+                        <i class="fas fa-image"></i>
+                        <span data-i18n="templateImageCaption">Image + Caption</span>
+                    </button>
+                    <button class="layout-template-btn" onclick="insertTemplate('labelBadge')">
+                        <i class="fas fa-tag"></i>
+                        <span data-i18n="templateLabelBadge">Label Badge</span>
+                    </button>
+                    <button class="layout-template-btn" onclick="insertTemplate('callout')">
+                        <i class="fas fa-comment-dots"></i>
+                        <span data-i18n="templateCallout">Callout Box</span>
+                    </button>
+                </div>
+            </div>
+            
+            <button onclick="closeLayoutModal()" style="width: 100%; padding: 12px; background: var(--bg-secondary); border: 2px solid var(--border-color); border-radius: 8px; cursor: pointer; font-size: 14px; font-weight: 600; color: var(--text-primary);">
+                <i class="fas fa-times"></i> <span data-i18n="cancel">Cancel</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Load i18n first, then state, then canvas modules, then main app -->
     <script src="/assets/js/i18n.js"></script>
+    <script src="/src/state/state.js"></script>
+    <script src="/src/canvas/initCanvas.js"></script>
+    <script src="/src/canvas/selection.js"></script>
+    <script src="/src/canvas/group.js"></script>
+    <script src="/src/canvas/transform.js"></script>
+    <script src="/src/upload/imageUpload.js"></script>
+    <script src="/src/layout/containers.js"></script>
+    <script src="/src/layout/templates.js"></script>
     <script src="/assets/js/app.js"></script>
     
     <!-- Language switching functions -->
@@ -850,37 +995,6 @@
             }
         }
         
-        // Settings drawer toggle function
-        function openSettingsModal(type) {
-            const drawers = {
-                'background': 'bgDrawer',
-                'shape': 'shapeDrawer',
-                'draw': 'drawDrawer',
-                'text': 'textDrawer',
-                'layer': 'layerDrawer'
-            };
-            
-            const drawerId = drawers[type];
-            if (!drawerId) return;
-            
-            const drawer = document.getElementById(drawerId);
-            if (!drawer) return;
-            
-            // Toggle the drawer
-            const isOpen = drawer.classList.contains('show');
-            
-            // Close all drawers first
-            Object.values(drawers).forEach(id => {
-                const d = document.getElementById(id);
-                if (d) d.classList.remove('show');
-            });
-            
-            // Open the clicked drawer if it was closed
-            if (!isOpen) {
-                drawer.classList.add('show');
-            }
-        }
-        
         // Close dropdown when clicking outside
         document.addEventListener('click', function(e) {
             const langSelector = document.getElementById('langSelector');
@@ -912,6 +1026,13 @@
                     option.classList.remove('active');
                 }
             });
+            
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('[SW] Registered'))
+                    .catch((err) => console.log('[SW] Registration failed:', err));
+            }
         });
     </script>
     

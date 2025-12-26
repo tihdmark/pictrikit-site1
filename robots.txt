@@ -1,9 +1,24 @@
+# robots.txt for PictriKit
+# https://pictrikit.com
+
 User-agent: *
 Allow: /
 
-# Sitemap
+# Sitemap location
 Sitemap: https://pictrikit.com/sitemap.xml
 
-# Disallow admin and private paths
-Disallow: /admin/
-Disallow: /private/
+# Allow Service Worker
+Allow: /sw.js
+
+# Disallow admin or private paths (if any)
+Disallow: /.kiro/
+
+# Allow all crawlers to access main content
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /

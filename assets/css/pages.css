@@ -708,3 +708,137 @@ body {
         justify-content: center;
     }
 }
+
+
+/* Use Cases Section Styles */
+.section-intro {
+    font-size: 16px;
+    color: var(--text-secondary);
+    margin-bottom: 30px;
+    line-height: 1.7;
+}
+
+.use-case-block {
+    background: var(--bg-secondary);
+    border-radius: 12px;
+    padding: 28px;
+    margin-bottom: 24px;
+    border-left: 4px solid #0066cc;
+    scroll-margin-top: 100px;
+}
+
+.use-case-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+}
+
+.use-case-icon {
+    width: 48px;
+    height: 48px;
+    background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.use-case-icon i {
+    font-size: 20px;
+    color: white;
+}
+
+.use-case-block h3 {
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.use-case-block > p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+    margin-bottom: 20px;
+}
+
+.use-case-when {
+    background: var(--bg-primary);
+    border-radius: 8px;
+    padding: 16px 20px;
+}
+
+.use-case-when strong {
+    display: block;
+    margin-bottom: 10px;
+    color: var(--text-primary);
+    font-size: 14px;
+}
+
+.use-case-when ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.use-case-when li {
+    font-size: 14px;
+    color: var(--text-secondary);
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+
+.use-case-when li:last-child {
+    margin-bottom: 0;
+}
+
+@media (max-width: 768px) {
+    .use-case-block {
+        padding: 20px;
+    }
+    .use-case-header {
+        gap: 12px;
+    }
+    .use-case-icon {
+        width: 40px;
+        height: 40px;
+    }
+    .use-case-icon i {
+        font-size: 18px;
+    }
+    .use-case-block h3 {
+        font-size: 18px;
+    }
+}
+
+/* 
+Footer 版本号样式 */
+.footer-version {
+    margin-top: 12px;
+    font-size: 12px;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.version-link {
+    color: var(--accent-color);
+    text-decoration: none;
+    font-weight: 600;
+    padding: 2px 8px;
+    background: rgba(102, 126, 234, 0.1);
+    border-radius: 4px;
+    transition: all 0.2s;
+}
+
+.version-link:hover {
+    background: rgba(102, 126, 234, 0.2);
+}
+
+.version-status {
+    color: #10b981;
+    font-size: 11px;
+}

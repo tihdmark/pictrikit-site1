@@ -9,13 +9,13 @@
   "orientation": "any",
   "icons": [
     {
-      "src": "/assets/images/favicon/android-chrome-192x192.png",
+      "src": "/assets/images/favicon/web-app-manifest-192x192.png",
       "sizes": "192x192",
       "type": "image/png",
       "purpose": "any maskable"
     },
     {
-      "src": "/assets/images/favicon/android-chrome-512x512.png",
+      "src": "/assets/images/favicon/web-app-manifest-512x512.png",
       "sizes": "512x512",
       "type": "image/png",
       "purpose": "any maskable"
@@ -27,20 +27,6 @@
     }
   ],
   "categories": ["productivity", "utilities", "graphics"],
-  "screenshots": [
-    {
-      "src": "/assets/images/screenshot-desktop.png",
-      "sizes": "1280x720",
-      "type": "image/png",
-      "form_factor": "wide"
-    },
-    {
-      "src": "/assets/images/screenshot-mobile.png",
-      "sizes": "750x1334",
-      "type": "image/png",
-      "form_factor": "narrow"
-    }
-  ],
   "shortcuts": [
     {
       "name": "Launch App",
@@ -49,7 +35,7 @@
       "url": "/app.html",
       "icons": [
         {
-          "src": "/assets/images/favicon/android-chrome-192x192.png",
+          "src": "/assets/images/favicon/web-app-manifest-192x192.png",
           "sizes": "192x192"
         }
       ]

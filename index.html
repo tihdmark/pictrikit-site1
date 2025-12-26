@@ -14,9 +14,9 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     
     <!-- SEO Meta Tags -->
-    <title>PictriKit - 截图拼接工具</title>
-    <meta name="description" content="简洁的图片处理工具，侧重UI设计时的元素拼接，也适合图片、截图、文字等多类型素材处理。无需注册，傻瓜式页面。">
-    <meta name="keywords" content="截图拼接, 图片拼接, 长截图, UI设计, 素材拼接, 在线拼图, screenshot stitch, combine screenshots, image merge">
+    <title>PictriKit - Free Online Screenshot Combiner & Annotation Tool</title>
+    <meta name="description" content="Combine multiple screenshots into one image. Add annotations, blur sensitive info, and export instantly. Free, no registration, works in browser.">
+    <meta name="keywords" content="screenshot combiner, combine screenshots, screenshot annotation, annotate screenshots, stitch screenshots, chat screenshots, tutorial images, bug report screenshots">
     <link rel="canonical" href="https://pictrikit.com/">
     
     <!-- Hreflang Tags -->
@@ -29,21 +29,21 @@
     <!-- Open Graph -->
     <meta property="og:type" content="website">
     <meta property="og:site_name" content="PictriKit">
-    <meta property="og:title" content="PictriKit - 截图拼接工具">
-    <meta property="og:description" content="简洁的图片处理工具，侧重UI设计元素拼接，无需注册。">
+    <meta property="og:title" content="PictriKit - Free Online Screenshot Combiner & Annotation Tool">
+    <meta property="og:description" content="Combine multiple screenshots into one image. Add annotations, blur sensitive info, and export instantly.">
     <meta property="og:url" content="https://pictrikit.com/">
     <meta property="og:image" content="https://pictrikit.com/assets/images/og-image.png">
     <meta property="og:image:width" content="1200">
     <meta property="og:image:height" content="630">
-    <meta property="og:image:alt" content="PictriKit">
+    <meta property="og:image:alt" content="PictriKit - Screenshot Combiner">
     
     <!-- Twitter Card -->
     <meta name="twitter:card" content="summary_large_image">
     <meta name="twitter:site" content="@pictrikit">
-    <meta name="twitter:title" content="PictriKit - 截图拼接工具">
-    <meta name="twitter:description" content="简洁的图片处理工具，侧重UI设计元素拼接，无需注册。">
+    <meta name="twitter:title" content="PictriKit - Free Online Screenshot Combiner & Annotation Tool">
+    <meta name="twitter:description" content="Combine multiple screenshots into one image. Add annotations, blur sensitive info, and export instantly.">
     <meta name="twitter:image" content="https://pictrikit.com/assets/images/og-image.png">
-    <meta name="twitter:image:alt" content="PictriKit">
+    <meta name="twitter:image:alt" content="PictriKit - Screenshot Combiner">
     
     <!-- Schema.org Structured Data - WebApplication -->
     <script type="application/ld+json">
@@ -52,8 +52,8 @@
       "@type": "WebApplication",
       "name": "PictriKit",
       "url": "https://pictrikit.com",
-      "description": "简洁的图片处理工具，侧重UI设计元素拼接，无需注册。",
-      "applicationCategory": "DesignApplication",
+      "description": "Free online tool for combining and annotating screenshots. Combine chat logs, create tutorial images, document bugs with annotations.",
+      "applicationCategory": "UtilitiesApplication",
       "operatingSystem": "Any",
       "browserRequirements": "Requires JavaScript",
       "offers": {
@@ -62,11 +62,11 @@
         "priceCurrency": "USD"
       },
       "featureList": [
-        "截图拼接",
-        "文字标注",
-        "马赛克",
-        "一键复制",
-        "多语言"
+        "Screenshot combining",
+        "Image annotation",
+        "Privacy blur",
+        "One-click copy",
+        "Multi-language support"
       ]
     }
     </script>
@@ -155,6 +155,13 @@
         .cta-primary:hover {
             background: #0052a3;
             transform: translateY(-2px);
+        }
+        
+        .cta-hint {
+            margin-top: 12px;
+            font-size: 14px;
+            color: var(--text-secondary);
+            opacity: 0.8;
         }
         
         .feature-badges {
@@ -281,6 +288,102 @@
             font-size: 16px;
         }
         
+        /* Use Cases Section */
+        .use-cases-section {
+            padding: 60px 20px;
+            text-align: center;
+        }
+        
+        .use-cases-section h2 {
+            font-size: 28px;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .use-cases-grid {
+            display: flex;
+            justify-content: center;
+            gap: 20px;
+            max-width: 1100px;
+            margin: 0 auto;
+        }
+        
+        .use-case-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 24px 20px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            text-decoration: none;
+            transition: all 0.3s;
+            border: 1px solid transparent;
+            flex: 1;
+            min-width: 0;
+            max-width: 260px;
+        }
+        
+        .use-case-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+            border-color: #0066cc;
+        }
+        
+        .use-case-icon {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #0066cc 0%, #0052a3 100%);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 12px;
+        }
+        
+        .use-case-icon i {
+            font-size: 20px;
+            color: white;
+        }
+        
+        .use-case-card h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--text-primary);
+            margin-bottom: 6px;
+            white-space: nowrap;
+        }
+        
+        .use-case-card p {
+            font-size: 12px;
+            line-height: 1.5;
+            color: var(--text-secondary);
+            margin: 0;
+            text-align: center;
+        }
+        
+        @media (max-width: 900px) {
+            .use-cases-grid {
+                flex-wrap: wrap;
+            }
+            .use-case-card {
+                flex: 0 0 calc(50% - 10px);
+                max-width: calc(50% - 10px);
+            }
+        }
+        
+        @media (max-width: 500px) {
+            .use-cases-grid {
+                flex-direction: column;
+                align-items: center;
+            }
+            .use-case-card {
+                flex: none;
+                width: 100%;
+                max-width: 280px;
+            }
+        }
+        
         /* Reviews Section */
         .reviews-section {
             padding: 50px 20px;
@@ -348,6 +451,114 @@
                 justify-content: center;
             }
         }
+        
+        /* Expression Use Cases Section */
+        .expression-section {
+            padding: 60px 20px;
+            background: var(--bg-primary);
+        }
+        
+        .expression-section h2 {
+            text-align: center;
+            font-size: 28px;
+            margin-bottom: 40px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .expression-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 30px;
+            max-width: 1000px;
+            margin: 0 auto;
+        }
+        
+        .expression-item {
+            text-align: center;
+            padding: 30px 24px;
+            background: var(--bg-secondary);
+            border-radius: 12px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .expression-item:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.1);
+        }
+        
+        .expression-icon {
+            width: 60px;
+            height: 60px;
+            margin: 0 auto 20px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .expression-icon i {
+            font-size: 24px;
+            color: white;
+        }
+        
+        .expression-item h3 {
+            font-size: 18px;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .expression-item p {
+            font-size: 14px;
+            line-height: 1.7;
+            color: var(--text-secondary);
+        }
+        
+        @media (max-width: 768px) {
+            .expression-section h2 {
+                font-size: 22px;
+            }
+            .expression-grid {
+                gap: 20px;
+            }
+            .expression-item {
+                padding: 24px 20px;
+            }
+        }
+        
+        /* Beyond Screenshots Section */
+        .beyond-section {
+            padding: 50px 20px;
+            text-align: center;
+        }
+        
+        .beyond-section h2 {
+            font-size: 24px;
+            margin-bottom: 24px;
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+        
+        .beyond-content {
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        .beyond-text p {
+            font-size: 15px;
+            line-height: 1.8;
+            color: var(--text-secondary);
+            text-align: center;
+        }
+        
+        @media (max-width: 768px) {
+            .beyond-text p {
+                font-size: 14px;
+                text-align: left;
+            }
+        }
     </style>
 </head>
 <body class="homepage">
@@ -397,6 +608,7 @@
                 <i class="fas fa-play-circle"></i>
                 <span data-i18n="startNow">Start Now</span>
             </a>
+            <p class="cta-hint" data-i18n="pasteHint">or press Ctrl+V to paste</p>
             
             <div class="feature-badges">
                 <div class="badge">
@@ -445,52 +657,114 @@
             </div>
         </section>
 
+        <!-- Expression Use Cases Section -->
+        <section class="expression-section">
+            <h2 data-i18n="expressionTitle">More Than Stitching — A Tool for Expression</h2>
+            <div class="expression-grid">
+                <div class="expression-item">
+                    <div class="expression-icon">
+                        <i class="fas fa-puzzle-piece"></i>
+                    </div>
+                    <h3 data-i18n="expressionCase1Title">Explain Complex Problems</h3>
+                    <p data-i18n="expressionCase1Desc">Use screenshots to break down a complicated issue into clear, visual steps that anyone can understand.</p>
+                </div>
+                <div class="expression-item">
+                    <div class="expression-icon">
+                        <i class="fas fa-route"></i>
+                    </div>
+                    <h3 data-i18n="expressionCase2Title">Show Your Thought Process</h3>
+                    <p data-i18n="expressionCase2Desc">Combine images to present how an idea evolved, from initial concept to final result.</p>
+                </div>
+                <div class="expression-item">
+                    <div class="expression-icon">
+                        <i class="fas fa-lightbulb"></i>
+                    </div>
+                    <h3 data-i18n="expressionCase3Title">Make Ideas Concrete</h3>
+                    <p data-i18n="expressionCase3Desc">Add annotations to turn vague thoughts into specific, actionable visuals that communicate clearly.</p>
+                </div>
+            </div>
+        </section>
+
         <!-- SEO Description Section -->
         <section class="seo-description">
-            <!-- 中文 -->
-            <div class="seo-text" lang="zh-CN" data-lang="zh-CN" style="display:none;">
-                <p>一个简洁的图片处理工具，设计时侧重于web、app等UI设计时的元素拼接。制作完成后发现也适合图片、照片、截图、文字等多类型素材的处理。支持拼接、裁剪、标注、马赛克、画笔、形状、图标等功能。无需注册，傻瓜式页面。</p>
-            </div>
-            
             <!-- English -->
             <div class="seo-text" lang="en" data-lang="en">
-                <p>A simple image tool originally designed for UI design element stitching. Turns out it also works great for photos, screenshots, and text. Features include stitching, cropping, annotation, blur, drawing, shapes, and icons. No registration needed, easy to use.</p>
+                <p>PictriKit is a free online tool for combining and annotating screenshots. Upload multiple images, arrange them on a canvas, add text or arrows, blur sensitive areas, and export as PNG, JPG, or PDF. Everything runs locally in your browser — no uploads, no registration. Perfect for combining chat screenshots, creating tutorial images, or documenting bugs.</p>
+            </div>
+            
+            <!-- 中文 -->
+            <div class="seo-text" lang="zh-CN" data-lang="zh-CN" style="display:none;">
+                <p>PictriKit 是一款免费的在线截图拼接与标注工具。上传多张图片，在画布上排列，添加文字或箭头，模糊敏感区域，导出为 PNG、JPG 或 PDF。所有处理都在浏览器本地完成，无需上传，无需注册。适合拼接聊天截图、制作教程图片、记录Bug截图。PictriKit 适合任何"由多个视觉元素组成的想法"，截图只是最常见的一种。</p>
             </div>
             
             <!-- 日本語 -->
             <div class="seo-text" lang="ja" data-lang="ja" style="display:none;">
-                <p>UIデザイン向けに作ったシンプルな画像ツール。写真、スクショ、テキストにも使えます。結合、切り抜き、注釈、モザイク、描画、図形、アイコン機能付き。登録不要、簡単操作。</p>
+                <p>PictriKitは、スクリーンショットの結合と注釈付けのための無料オンラインツールです。複数の画像をアップロードし、キャンバス上で配置、テキストや矢印を追加、機密部分をぼかし、PNG・JPG・PDFでエクスポート。すべての処理はブラウザ内で完結し、アップロードも登録も不要です。チャットスクショの結合、チュートリアル画像の作成、バグ報告に最適。</p>
             </div>
             
             <!-- 한국어 -->
             <div class="seo-text" lang="ko" data-lang="ko" style="display:none;">
-                <p>UI 디자인용으로 만든 간단한 이미지 도구. 사진, 스크샷, 텍스트에도 사용 가능. 결합, 자르기, 주석, 모자이크, 그리기, 도형, 아이콘 기능 포함. 가입 불필요, 쉬운 사용.</p>
+                <p>PictriKit은 스크린샷 결합 및 주석 추가를 위한 무료 온라인 도구입니다. 여러 이미지를 업로드하고, 캔버스에 배치하고, 텍스트나 화살표를 추가하고, 민감한 부분을 흐리게 처리한 후 PNG, JPG, PDF로 내보내세요. 모든 처리는 브라우저에서 로컬로 진행되며, 업로드나 가입이 필요 없습니다. 채팅 스크린샷 결합, 튜토리얼 이미지 제작, 버그 리포트에 적합합니다.</p>
             </div>
         </section>
 
-        <!-- Quick Links Section - Internal Links -->
-        <section class="quick-links">
-            <h2 data-i18n="exploreMore">Explore More</h2>
-            <div class="links-grid">
-                <a href="/features.html" class="link-card">
-                    <i class="fas fa-star"></i>
-                    <span data-i18n="navFeatures">Features</span>
+        <!-- Beyond Screenshots Section -->
+        <section class="beyond-section">
+            <h2 data-i18n="beyondTitle">More Than Just Screenshots</h2>
+            <div class="beyond-content">
+                <!-- English -->
+                <div class="beyond-text" lang="en" data-lang="en">
+                    <p>Screenshots are the most common use case, but PictriKit works with any visual elements you need to organize. Use it to explain a process, illustrate a problem, present an idea, or reconstruct a concept. When words alone aren't enough, arrange your visuals into one clear image that speaks for itself.</p>
+                </div>
+                
+                <!-- 中文 -->
+                <div class="beyond-text" lang="zh-CN" data-lang="zh-CN" style="display:none;">
+                    <p>截图是最常见的使用场景，但 PictriKit 可以处理任何需要整理的视觉元素。用它来解释一个流程、说明一个问题、展示一个思路、还原一个概念。当文字不够用时，把视觉素材排列成一张清晰的图，让图片替你表达。</p>
+                </div>
+                
+                <!-- 日本語 -->
+                <div class="beyond-text" lang="ja" data-lang="ja" style="display:none;">
+                    <p>スクリーンショットは最も一般的な用途ですが、PictriKitは整理が必要なあらゆる視覚要素に対応します。プロセスの説明、問題の図解、アイデアの提示、コンセプトの再現に活用できます。言葉だけでは伝わらないとき、視覚素材を1枚の明確な画像にまとめましょう。</p>
+                </div>
+                
+                <!-- 한국어 -->
+                <div class="beyond-text" lang="ko" data-lang="ko" style="display:none;">
+                    <p>스크린샷이 가장 일반적인 사용 사례이지만, PictriKit은 정리가 필요한 모든 시각적 요소에 활용할 수 있습니다. 프로세스 설명, 문제 설명, 아이디어 제시, 개념 재구성에 사용하세요. 말로 부족할 때, 시각 자료를 하나의 명확한 이미지로 정리해 보세요.</p>
+                </div>
+            </div>
+        </section>
+
+        <!-- Use Cases Section -->
+        <section class="use-cases-section">
+            <h2 data-i18n="useCasesTitle">Explore Use Cases</h2>
+            <div class="use-cases-grid">
+                <a href="/features.html#tutorial-images" class="use-case-card">
+                    <div class="use-case-icon">
+                        <i class="fas fa-chalkboard-teacher"></i>
+                    </div>
+                    <h3 data-i18n="useCaseTutorial">Tutorial Images</h3>
+                    <p data-i18n="useCaseTutorialDesc">Create step-by-step guides with annotated screenshots</p>
                 </a>
-                <a href="/tutorial.html" class="link-card">
-                    <i class="fas fa-book"></i>
-                    <span data-i18n="navTutorial">Tutorial</span>
+                <a href="/features.html#product-feedback" class="use-case-card">
+                    <div class="use-case-icon">
+                        <i class="fas fa-comment-dots"></i>
+                    </div>
+                    <h3 data-i18n="useCaseFeedback">Product Feedback</h3>
+                    <p data-i18n="useCaseFeedbackDesc">Document issues and suggestions with visual context</p>
                 </a>
-                <a href="/blog/" class="link-card">
-                    <i class="fas fa-blog"></i>
-                    <span data-i18n="navBlog">Blog</span>
+                <a href="/features.html#thought-organization" class="use-case-card">
+                    <div class="use-case-icon">
+                        <i class="fas fa-project-diagram"></i>
+                    </div>
+                    <h3 data-i18n="useCaseThinking">Thought Organization</h3>
+                    <p data-i18n="useCaseThinkingDesc">Arrange scattered ideas into a coherent visual flow</p>
                 </a>
-                <a href="/faq.html" class="link-card">
-                    <i class="fas fa-question-circle"></i>
-                    <span data-i18n="navFaq">FAQ</span>
-                </a>
-                <a href="/about.html" class="link-card">
-                    <i class="fas fa-info-circle"></i>
-                    <span data-i18n="navAbout">About</span>
+                <a href="/features.html#concept-presentation" class="use-case-card">
+                    <div class="use-case-icon">
+                        <i class="fas fa-shapes"></i>
+                    </div>
+                    <h3 data-i18n="useCaseConcept">Concept Presentation</h3>
+                    <p data-i18n="useCaseConceptDesc">Combine references to communicate design ideas clearly</p>
                 </a>
             </div>
         </section>
@@ -586,6 +860,21 @@
                     defaultSection.style.display = 'block';
                 }
             }
+            
+            // Show/hide Beyond section based on language
+            document.querySelectorAll('.beyond-text').forEach(section => {
+                section.style.display = 'none';
+            });
+            
+            const targetBeyond = document.querySelector(`.beyond-text[data-lang="${lang}"]`);
+            if (targetBeyond) {
+                targetBeyond.style.display = 'block';
+            } else {
+                const defaultBeyond = document.querySelector('.beyond-text[data-lang="en"]');
+                if (defaultBeyond) {
+                    defaultBeyond.style.display = 'block';
+                }
+            }
         }
         
         // Initialize language on load
@@ -601,6 +890,13 @@
                 langSelect.value = savedLang;
             }
             changeLanguage(savedLang);
+            
+            // Register Service Worker
+            if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.register('/sw.js')
+                    .then((reg) => console.log('[SW] Registered'))
+                    .catch((err) => console.log('[SW] Registration failed:', err));
+            }
         });
     </script>
 </body>
