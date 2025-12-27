@@ -4,7 +4,7 @@
 
 // ==================== 穿透选择状态 ====================
 let hoverHighlightRect = null;  // hover 高亮框
-let lastHoveredObject = null;   // 上次 hover 的对象
+let hoverTarget = null;         // 当前 hover 的目标对象（全局维护）
 
 /**
  * 禁止 ActiveSelection 旋转
@@ -58,14 +58,14 @@ function getObjectArea(obj) {
 }
 
 /**
- * 检查点是否在对象内部（考虑旋转和缩放）
+ * 检查点是否在对象内部（使用扩展的容忍度）
  * @param {fabric.Object} obj - fabric 对象
  * @param {Object} pointer - 鼠标坐标 {x, y}
  * @returns {boolean}
  */
 function isPointInObject(obj, pointer) {
-    // 使用 fabric 的 containsPoint 方法
-    return obj.containsPoint(pointer);
+    // 使用 fabric 的 containsPoint 方法，带容忍度
+    return obj.containsPoint(pointer, null, true);
 }
 
 /**
@@ -106,7 +106,7 @@ function getObjectsAtPoint(canvas, pointer) {
  */
 function showHoverHighlight(canvas, target) {
     // 如果是同一个对象，不重复创建
-    if (lastHoveredObject === target && hoverHighlightRect) return;
+    if (hoverTarget === target && hoverHighlightRect) return;
     
     // 清除旧的高亮框
     hideHoverHighlight(canvas);
@@ -137,7 +137,7 @@ function showHoverHighlight(canvas, target) {
     });
     
     canvas.add(hoverHighlightRect);
-    lastHoveredObject = target;
+    hoverTarget = target;
     canvas.requestRenderAll();
 }
 
@@ -150,7 +150,15 @@ function hideHoverHighlight(canvas) {
         canvas.remove(hoverHighlightRect);
         hoverHighlightRect = null;
     }
-    lastHoveredObject = null;
+    hoverTarget = null;
+}
+
+/**
+ * 获取当前 hover 目标
+ * @returns {fabric.Object|null}
+ */
+function getHoverTarget() {
+    return hoverTarget;
 }
 
 /**
@@ -173,12 +181,7 @@ function getPenetratingTarget(canvas, pointer) {
  * @param {fabric.Canvas} canvas - canvas 实例
  */
 function bindPenetratingSelectionEvents(canvas) {
-    // 存储待选中的穿透目标
-    let pendingPenetratingTarget = null;
-    // 标记是否正在执行穿透选择（用于阻止其他事件处理）
-    let isPenetratingSelection = false;
-    
-    // 鼠标移动 - hover 检测
+    // 鼠标移动 - hover 检测，维护全局 hoverTarget
     canvas.on('mouse:move', function(opt) {
         // 如果正在拖动或绘图模式，不处理
         if (canvas.isDrawingMode) return;
@@ -206,7 +209,7 @@ function bindPenetratingSelectionEvents(canvas) {
         }
     });
     
-    // 使用 mouse:down:before 在 fabric 处理之前拦截
+    // 核心：在 mouse:down:before 中拦截，强制设置 target
     canvas.on('mouse:down:before', function(opt) {
         // 如果正在拖动画板，不处理
         if (typeof AppState !== 'undefined' && AppState.isSpacePressed) return;
@@ -215,53 +218,65 @@ function bindPenetratingSelectionEvents(canvas) {
         // 只处理左键点击
         if (opt.e.button !== 0) return;
         
-        // 如果有 hover 高亮的被遮挡对象，记录它并标记穿透选择状态
-        if (lastHoveredObject) {
-            pendingPenetratingTarget = lastHoveredObject;
-            isPenetratingSelection = true;
+        // 关键：如果有 hoverTarget，强制将其设为 fabric 的 target
+        if (hoverTarget) {
+            // 保存 hoverTarget 引用
+            const targetToSelect = hoverTarget;
             
-            // 立即清除 hover 高亮
-            hideHoverHighlight(canvas);
-            
-            // 阻止 fabric 的默认选择行为
-            // 通过临时禁用 canvas 的 selection
+            // 标记正在执行穿透选择
             canvas._isPenetratingSelection = true;
+            canvas._penetratingTarget = targetToSelect;
+            
+            // 清除 hover 高亮（但保留 targetToSelect 引用）
+            if (hoverHighlightRect) {
+                canvas.remove(hoverHighlightRect);
+                hoverHighlightRect = null;
+            }
+            hoverTarget = null;
+            
+            // 强制覆盖 fabric 的 target 检测结果
+            // 通过修改 opt.target 来告诉 fabric 应该选中哪个对象
+            opt.target = targetToSelect;
         } else {
-            pendingPenetratingTarget = null;
-            isPenetratingSelection = false;
             canvas._isPenetratingSelection = false;
+            canvas._penetratingTarget = null;
         }
     });
     
-    // 鼠标按下后 - 执行穿透选择
+    // mouse:down 中确保选中正确的对象
     canvas.on('mouse:down', function(opt) {
-        // 如果有待选中的穿透目标
-        if (pendingPenetratingTarget && isPenetratingSelection) {
-            const targetObj = pendingPenetratingTarget;
+        if (canvas._isPenetratingSelection && canvas._penetratingTarget) {
+            const targetObj = canvas._penetratingTarget;
             
             // 重置状态
-            pendingPenetratingTarget = null;
-            isPenetratingSelection = false;
             canvas._isPenetratingSelection = false;
+            canvas._penetratingTarget = null;
             
-            // 直接选中目标对象（不使用 setTimeout，避免闪烁）
-            canvas.discardActiveObject();
-            canvas.setActiveObject(targetObj);
+            // 确保选中的是我们指定的对象
+            const currentActive = canvas.getActiveObject();
+            if (currentActive !== targetObj) {
+                // fabric 选错了，手动修正
+                canvas.discardActiveObject();
+                canvas.setActiveObject(targetObj);
+            }
             
             // 将对象置顶
             targetObj.bringToFront();
-            
             canvas.requestRenderAll();
         }
     });
     
     // 选择改变时清除 hover
     canvas.on('selection:created', function() {
-        hideHoverHighlight(canvas);
+        if (hoverHighlightRect) {
+            hideHoverHighlight(canvas);
+        }
     });
     
     canvas.on('selection:updated', function() {
-        hideHoverHighlight(canvas);
+        if (hoverHighlightRect) {
+            hideHoverHighlight(canvas);
+        }
     });
     
     // 鼠标离开画布时清除 hover
@@ -319,9 +334,11 @@ window.Selection = {
     getPenetratingTarget: getPenetratingTarget,
     showHoverHighlight: showHoverHighlight,
     hideHoverHighlight: hideHoverHighlight,
-    isPenetratingSelectionActive: isPenetratingSelectionActive
+    isPenetratingSelectionActive: isPenetratingSelectionActive,
+    getHoverTarget: getHoverTarget
 };
 
 // 保持向后兼容 - 直接暴露核心函数
 window.disableActiveSelectionRotation = disableActiveSelectionRotation;
 window.isPenetratingSelectionActive = isPenetratingSelectionActive;
+window.getHoverTarget = getHoverTarget;
