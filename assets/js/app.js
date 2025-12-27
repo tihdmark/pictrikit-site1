@@ -432,8 +432,11 @@
         // 标记 canvas 已就绪
         setBootstrapState('canvasReady', true);
         
-        // 标记 canvas 已就绪
-        setBootstrapState('canvasReady', true);
+        // 初始化穿透选择功能
+        if (typeof Selection !== 'undefined' && Selection.bindPenetratingSelectionEvents) {
+            Selection.bindPenetratingSelectionEvents(canvas);
+        }
+        
         initTheme();
         updateLanguage();
         window.addEventListener('resize', initCanvas);
