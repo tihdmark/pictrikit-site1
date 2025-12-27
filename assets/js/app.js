@@ -1339,7 +1339,10 @@
         }
 
         canvas.on('selection:created', (e) => {
-            e.selected[0].bringToFront();
+            // 穿透选择时不执行 bringToFront（穿透选择模块会处理）
+            if (!canvas._isPenetratingSelection) {
+                e.selected[0].bringToFront();
+            }
             canvas.renderAll();
             updateCropButtonState();
             
@@ -1356,8 +1359,8 @@
                 if (textPickr) textPickr.setColor(obj.fill);
                 if (textPickrMobile) textPickrMobile.setColor(obj.fill);
             }
-            // 形状对象（矩形、圆形、线条、箭头组）
-            else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line' || obj.type === 'group') {
+            // 形状对象（矩形、圆形、线条）- 不包括 group，避免气泡等触发
+            else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line') {
                 if (shapePickr) {
                     const fillColor = obj.fill || currentShapeColor;
                     const strokeColor = obj.stroke || currentShapeStroke;
@@ -1369,7 +1372,10 @@
         });
 
         canvas.on('selection:updated', (e) => {
-            e.selected[0].bringToFront();
+            // 穿透选择时不执行 bringToFront（穿透选择模块会处理）
+            if (!canvas._isPenetratingSelection) {
+                e.selected[0].bringToFront();
+            }
             canvas.renderAll();
             updateCropButtonState();
             
@@ -1386,8 +1392,8 @@
                 if (textPickr) textPickr.setColor(obj.fill);
                 if (textPickrMobile) textPickrMobile.setColor(obj.fill);
             }
-            // 形状对象
-            else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line' || obj.type === 'group') {
+            // 形状对象 - 不包括 group，避免气泡等触发
+            else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line') {
                 if (shapePickr) {
                     const fillColor = obj.fill || currentShapeColor;
                     const strokeColor = obj.stroke || currentShapeStroke;

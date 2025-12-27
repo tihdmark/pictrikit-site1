@@ -175,6 +175,8 @@ function getPenetratingTarget(canvas, pointer) {
 function bindPenetratingSelectionEvents(canvas) {
     // 存储待选中的穿透目标
     let pendingPenetratingTarget = null;
+    // 标记是否正在执行穿透选择（用于阻止其他事件处理）
+    let isPenetratingSelection = false;
     
     // 鼠标移动 - hover 检测
     canvas.on('mouse:move', function(opt) {
@@ -213,35 +215,43 @@ function bindPenetratingSelectionEvents(canvas) {
         // 只处理左键点击
         if (opt.e.button !== 0) return;
         
-        // 如果有 hover 高亮的被遮挡对象，记录它
+        // 如果有 hover 高亮的被遮挡对象，记录它并标记穿透选择状态
         if (lastHoveredObject) {
             pendingPenetratingTarget = lastHoveredObject;
+            isPenetratingSelection = true;
+            
+            // 立即清除 hover 高亮
+            hideHoverHighlight(canvas);
+            
+            // 阻止 fabric 的默认选择行为
+            // 通过临时禁用 canvas 的 selection
+            canvas._isPenetratingSelection = true;
         } else {
             pendingPenetratingTarget = null;
+            isPenetratingSelection = false;
+            canvas._isPenetratingSelection = false;
         }
     });
     
     // 鼠标按下后 - 执行穿透选择
     canvas.on('mouse:down', function(opt) {
         // 如果有待选中的穿透目标
-        if (pendingPenetratingTarget) {
+        if (pendingPenetratingTarget && isPenetratingSelection) {
             const targetObj = pendingPenetratingTarget;
+            
+            // 重置状态
             pendingPenetratingTarget = null;
+            isPenetratingSelection = false;
+            canvas._isPenetratingSelection = false;
             
-            // 清除 hover 高亮
-            hideHoverHighlight(canvas);
+            // 直接选中目标对象（不使用 setTimeout，避免闪烁）
+            canvas.discardActiveObject();
+            canvas.setActiveObject(targetObj);
             
-            // 延迟执行，让 fabric 的默认选择先完成，然后覆盖
-            setTimeout(() => {
-                // 选中被遮挡的对象
-                canvas.discardActiveObject();
-                canvas.setActiveObject(targetObj);
-                
-                // 将对象置顶
-                targetObj.bringToFront();
-                
-                canvas.requestRenderAll();
-            }, 0);
+            // 将对象置顶
+            targetObj.bringToFront();
+            
+            canvas.requestRenderAll();
         }
     });
     
@@ -258,6 +268,14 @@ function bindPenetratingSelectionEvents(canvas) {
     canvas.on('mouse:out', function() {
         hideHoverHighlight(canvas);
     });
+}
+
+/**
+ * 检查是否正在执行穿透选择
+ * @returns {boolean}
+ */
+function isPenetratingSelectionActive() {
+    return typeof canvas !== 'undefined' && canvas._isPenetratingSelection === true;
 }
 
 /**
@@ -300,8 +318,10 @@ window.Selection = {
     getObjectsAtPoint: getObjectsAtPoint,
     getPenetratingTarget: getPenetratingTarget,
     showHoverHighlight: showHoverHighlight,
-    hideHoverHighlight: hideHoverHighlight
+    hideHoverHighlight: hideHoverHighlight,
+    isPenetratingSelectionActive: isPenetratingSelectionActive
 };
 
 // 保持向后兼容 - 直接暴露核心函数
 window.disableActiveSelectionRotation = disableActiveSelectionRotation;
+window.isPenetratingSelectionActive = isPenetratingSelectionActive;
