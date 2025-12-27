@@ -2519,7 +2519,7 @@
                                 <button class="icon-btn" onclick="setBgTransparent(); closeSettingsModal();" title="Transparent">
                                     <i class="fas fa-border-none"></i>
                                 </button>
-                                <button class="icon-btn bg-color-btn" onclick="openBgColorPicker()" title="Color">
+                                <button class="icon-btn bg-color-btn" title="Color">
                                     <div class="pickr" id="bgColorPickerModal"></div>
                                 </button>
                             </div>
