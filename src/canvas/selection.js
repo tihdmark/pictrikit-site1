@@ -173,6 +173,9 @@ function getPenetratingTarget(canvas, pointer) {
  * @param {fabric.Canvas} canvas - canvas 实例
  */
 function bindPenetratingSelectionEvents(canvas) {
+    // 存储待选中的穿透目标
+    let pendingPenetratingTarget = null;
+    
     // 鼠标移动 - hover 检测
     canvas.on('mouse:move', function(opt) {
         // 如果正在拖动或绘图模式，不处理
@@ -201,8 +204,8 @@ function bindPenetratingSelectionEvents(canvas) {
         }
     });
     
-    // 鼠标按下 - 穿透选择
-    canvas.on('mouse:down', function(opt) {
+    // 使用 mouse:down:before 在 fabric 处理之前拦截
+    canvas.on('mouse:down:before', function(opt) {
         // 如果正在拖动画板，不处理
         if (typeof AppState !== 'undefined' && AppState.isSpacePressed) return;
         if (canvas.isDrawingMode) return;
@@ -210,34 +213,35 @@ function bindPenetratingSelectionEvents(canvas) {
         // 只处理左键点击
         if (opt.e.button !== 0) return;
         
-        const pointer = canvas.getPointer(opt.e);
-        const hitObjects = getObjectsAtPoint(canvas, pointer);
-        
-        if (hitObjects.length === 0) return;
-        
-        // 获取面积最小的对象
-        const targetObj = hitObjects[0];
-        
-        // 检查是否是被遮挡的对象
-        const topObject = canvas.findTarget(opt.e);
-        
-        // 如果点击的是 hover 高亮的对象（被遮挡的小元素）
-        if (targetObj !== topObject && lastHoveredObject === targetObj) {
-            // 阻止默认选择行为
-            opt.e.preventDefault();
-            opt.e.stopPropagation();
+        // 如果有 hover 高亮的被遮挡对象，记录它
+        if (lastHoveredObject) {
+            pendingPenetratingTarget = lastHoveredObject;
+        } else {
+            pendingPenetratingTarget = null;
+        }
+    });
+    
+    // 鼠标按下后 - 执行穿透选择
+    canvas.on('mouse:down', function(opt) {
+        // 如果有待选中的穿透目标
+        if (pendingPenetratingTarget) {
+            const targetObj = pendingPenetratingTarget;
+            pendingPenetratingTarget = null;
             
             // 清除 hover 高亮
             hideHoverHighlight(canvas);
             
-            // 选中被遮挡的对象
-            canvas.discardActiveObject();
-            canvas.setActiveObject(targetObj);
-            
-            // 将对象置顶
-            targetObj.bringToFront();
-            
-            canvas.requestRenderAll();
+            // 延迟执行，让 fabric 的默认选择先完成，然后覆盖
+            setTimeout(() => {
+                // 选中被遮挡的对象
+                canvas.discardActiveObject();
+                canvas.setActiveObject(targetObj);
+                
+                // 将对象置顶
+                targetObj.bringToFront();
+                
+                canvas.requestRenderAll();
+            }, 0);
         }
     });
     
