@@ -479,6 +479,7 @@
                 showToast('Loading...');
                 return;
             }
+            disableDrawMode(); // 关闭画笔模式
             imageUploadModule.triggerUpload();
         }
         
@@ -550,6 +551,7 @@
         let savedTextSettings = AppState.savedTextSettings;
 
         function addText() {
+            disableDrawMode(); // 关闭画笔模式
             const text = new fabric.IText('Double click to edit', {
                 left: canvasWidth / 2,
                 top: canvasHeight / 2,
@@ -635,10 +637,12 @@
 
         // 形状工具函数
         function toggleShapePanel() {
+            disableDrawMode(); // 关闭画笔模式
             openSettingsModal('shape');
         }
 
         function addRectangle() {
+            disableDrawMode(); // 关闭画笔模式
             const rect = new fabric.Rect({
                 left: canvasWidth / 2,
                 top: canvasHeight / 2,
@@ -665,6 +669,7 @@
         }
 
         function addCircle() {
+            disableDrawMode(); // 关闭画笔模式
             const circle = new fabric.Circle({
                 left: canvasWidth / 2,
                 top: canvasHeight / 2,
@@ -690,6 +695,7 @@
         }
 
         function addLine() {
+            disableDrawMode(); // 关闭画笔模式
             const line = new fabric.Line([50, 50, 250, 50], {
                 left: canvasWidth / 2 - 100,
                 top: canvasHeight / 2,
@@ -713,6 +719,7 @@
         }
 
         function addArrow() {
+            disableDrawMode(); // 关闭画笔模式
             // 创建更像箭头的形状：左侧箭头 + 右侧横线
             const triangle = new fabric.Triangle({
                 width: 20,
@@ -796,6 +803,7 @@
 
         // 裁剪工具函数
         function toggleCrop() {
+            disableDrawMode(); // 关闭画笔模式
             const activeObj = canvas.getActiveObject();
             
             if (!activeObj || activeObj.type !== 'image') {
@@ -1122,6 +1130,7 @@
 
         // 模糊工具
         function toggleBlur() {
+            disableDrawMode(); // 关闭画笔模式
             const activeObj = canvas.getActiveObject();
             if (!activeObj || activeObj.type !== 'image') {
                 showToast('Select an image first');
@@ -1149,6 +1158,7 @@
 
         // 马赛克工具
         function togglePixelate() {
+            disableDrawMode(); // 关闭画笔模式
             const activeObj = canvas.getActiveObject();
             if (!activeObj || activeObj.type !== 'image') {
                 showToast('Select an image first');
@@ -2064,6 +2074,7 @@
         let iconPickr = AppState.iconPickr;
 
         function openIconsModal() {
+            disableDrawMode(); // 关闭画笔模式
             document.getElementById('iconsModal').classList.add('show');
             loadIconCategory('popular');
             
@@ -2912,6 +2923,7 @@
         
         // 暴露布局函数供全局调用
         function openLayoutModal() {
+            disableDrawMode(); // 关闭画笔模式
             if (!layoutTemplatesModule) {
                 showToast('Loading...');
                 return;
