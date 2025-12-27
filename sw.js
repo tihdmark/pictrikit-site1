@@ -1,6 +1,6 @@
 // Service Worker for PictriKit
 // 版本号更新会触发旧缓存清理
-const CACHE_NAME = 'pictrikit-v1.5.0';
+const CACHE_NAME = 'pictrikit-v1.6.5';
 
 // 只缓存静态资源，不缓存 HTML 页面
 const STATIC_ASSETS = [

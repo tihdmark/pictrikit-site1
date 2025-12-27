@@ -277,21 +277,12 @@
                     if (c) {
                         const colorStr = c.toHEXA().toString();
                         currentShapeStroke = colorStr;
-                        // 如果颜色有透明度，用于填充，否则添加透明度
-                        if (colorStr.length > 7) {
-                            currentShapeColor = colorStr;
-                        } else {
-                            currentShapeColor = colorStr + '80'; // 50% opacity
-                        }
                         
-                        // 如果有选中的形状，更新其颜色
+                        // 如果有选中的形状，更新其边框颜色（空心形状只更新边框）
                         const activeObj = canvas.getActiveObject();
                         if (activeObj) {
                             if (activeObj.type === 'rect' || activeObj.type === 'circle') {
-                                activeObj.set({
-                                    fill: currentShapeColor,
-                                    stroke: currentShapeStroke
-                                });
+                                activeObj.set('stroke', currentShapeStroke);
                             } else if (activeObj.type === 'line') {
                                 activeObj.set('stroke', currentShapeStroke);
                             } else if (activeObj.type === 'group') {
@@ -306,9 +297,8 @@
                             }
                             canvas.renderAll();
                             saveState();
+                            showToast('✓ Shape color updated');
                         }
-                        
-                        showToast('✓ Shape color updated');
                     }
                     shapePickr.hide();
                 });
@@ -648,9 +638,10 @@
                 top: canvasHeight / 2,
                 width: 200,
                 height: 150,
-                fill: currentShapeColor,
+                fill: 'rgba(255,255,255,0.01)',
                 stroke: currentShapeStroke,
                 strokeWidth: 2,
+                strokeUniform: true,
                 originX: 'center',
                 originY: 'center',
                 cornerColor: '#0066cc',
@@ -674,9 +665,10 @@
                 left: canvasWidth / 2,
                 top: canvasHeight / 2,
                 radius: 80,
-                fill: currentShapeColor,
+                fill: 'rgba(255,255,255,0.01)',
                 stroke: currentShapeStroke,
                 strokeWidth: 2,
+                strokeUniform: true,
                 originX: 'center',
                 originY: 'center',
                 cornerColor: '#0066cc',
@@ -1358,7 +1350,7 @@
             
             const obj = e.selected[0];
             
-            // 文本对象
+            // 文本对象 - 同步UI控件状态
             if (obj.type.includes('text')) {
                 document.getElementById('fontFamily').value = obj.fontFamily || 'Arial';
                 document.getElementById('fontWeight').value = obj.fontWeight || 'normal';
@@ -1369,15 +1361,11 @@
                 if (textPickr) textPickr.setColor(obj.fill);
                 if (textPickrMobile) textPickrMobile.setColor(obj.fill);
             }
-            // 形状对象（矩形、圆形、线条）- 不包括 group，避免气泡等触发
+            // 形状对象 - 只更新内部变量，不触发颜色选择器（避免触发save事件）
             else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line') {
-                if (shapePickr) {
-                    const fillColor = obj.fill || currentShapeColor;
-                    const strokeColor = obj.stroke || currentShapeStroke;
-                    currentShapeColor = fillColor;
-                    currentShapeStroke = strokeColor;
-                    shapePickr.setColor(strokeColor);
-                }
+                const strokeColor = obj.stroke || currentShapeStroke;
+                currentShapeStroke = strokeColor;
+                // 注意：不调用 shapePickr.setColor()，避免触发 save 事件
             }
         });
 
@@ -1391,7 +1379,7 @@
             
             const obj = e.selected[0];
             
-            // 文本对象
+            // 文本对象 - 同步UI控件状态
             if (obj.type.includes('text')) {
                 document.getElementById('fontFamily').value = obj.fontFamily || 'Arial';
                 document.getElementById('fontWeight').value = obj.fontWeight || 'normal';
@@ -1402,15 +1390,11 @@
                 if (textPickr) textPickr.setColor(obj.fill);
                 if (textPickrMobile) textPickrMobile.setColor(obj.fill);
             }
-            // 形状对象 - 不包括 group，避免气泡等触发
+            // 形状对象 - 只更新内部变量，不触发颜色选择器
             else if (obj.type === 'rect' || obj.type === 'circle' || obj.type === 'line') {
-                if (shapePickr) {
-                    const fillColor = obj.fill || currentShapeColor;
-                    const strokeColor = obj.stroke || currentShapeStroke;
-                    currentShapeColor = fillColor;
-                    currentShapeStroke = strokeColor;
-                    shapePickr.setColor(strokeColor);
-                }
+                const strokeColor = obj.stroke || currentShapeStroke;
+                currentShapeStroke = strokeColor;
+                // 注意：不调用 shapePickr.setColor()，避免触发 save 事件
             }
         });
 
@@ -1773,15 +1757,6 @@
         }
 
         document.addEventListener('keydown', (e) => {
-            // C key - Center selected object
-            if (e.key === 'c' || e.key === 'C') {
-                const activeObj = canvas.getActiveObject();
-                if (activeObj && !activeObj.isEditing) {
-                    centerSelected();
-                    e.preventDefault();
-                    return;
-                }
-            }
             // 空格键按下 - 启用画板拖动模式
             if (e.code === 'Space' && !isSpacePressed) {
                 // 检查是否正在编辑文本，如果是则不启用拖动
@@ -1824,6 +1799,35 @@
                     e.preventDefault(); 
                     if (e.shiftKey) sendBackwards(); 
                     else sendToBack(); 
+                }
+                else if (k === 'c') {
+                    // Ctrl+C 复制
+                    const obj = canvas.getActiveObject();
+                    if (obj && !isEditingText) {
+                        e.preventDefault();
+                        obj.clone((cloned) => {
+                            window._clipboardObject = cloned;
+                            showToast('✓ Copied');
+                        });
+                    }
+                }
+                else if (k === 'v') {
+                    // Ctrl+V 粘贴
+                    if (window._clipboardObject) {
+                        e.preventDefault();
+                        window._clipboardObject.clone((cloned) => {
+                            cloned.set({
+                                left: cloned.left + 20,
+                                top: cloned.top + 20
+                            });
+                            canvas.add(cloned);
+                            canvas.setActiveObject(cloned);
+                            canvas.renderAll();
+                            hideEmptyState();
+                            saveState();
+                            showToast('✓ Pasted');
+                        });
+                    }
                 }
                 else if (k === 'd') {
                     e.preventDefault();
@@ -2714,12 +2718,11 @@
                 default: currentShapeStroke,
                 components: { preview: true, opacity: true, hue: true, interaction: { hex: true, input: true, save: true } }
             });
-            // 实时更新颜色
+            // 实时更新颜色（空心形状只更新边框）
             modalPickrs.shape.on('change', (c) => {
                 if (c) {
                     const colorStr = c.toHEXA().toString();
                     currentShapeStroke = colorStr;
-                    currentShapeColor = colorStr + '80';
                     const activeObj = canvas.getActiveObject();
                     if (activeObj && (activeObj.type === 'rect' || activeObj.type === 'circle' || activeObj.type === 'line' || activeObj.type === 'group')) {
                         if (activeObj.type === 'line') {
@@ -2730,7 +2733,7 @@
                                 else if (obj.type === 'triangle') obj.set('fill', currentShapeStroke);
                             });
                         } else {
-                            activeObj.set({ fill: currentShapeColor, stroke: currentShapeStroke });
+                            activeObj.set('stroke', currentShapeStroke);
                         }
                         canvas.renderAll();
                     }
