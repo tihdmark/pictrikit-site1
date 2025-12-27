@@ -181,6 +181,9 @@ function getPenetratingTarget(canvas, pointer) {
  * @param {fabric.Canvas} canvas - canvas 实例
  */
 function bindPenetratingSelectionEvents(canvas) {
+    // 存储穿透选择的目标
+    let penetratingTarget = null;
+    
     // 鼠标移动 - hover 检测，维护全局 hoverTarget
     canvas.on('mouse:move', function(opt) {
         // 如果正在拖动或绘图模式，不处理
@@ -209,7 +212,7 @@ function bindPenetratingSelectionEvents(canvas) {
         }
     });
     
-    // 核心：在 mouse:down:before 中拦截，强制设置 target
+    // 核心：在 mouse:down:before 中拦截
     canvas.on('mouse:down:before', function(opt) {
         // 如果正在拖动画板，不处理
         if (typeof AppState !== 'undefined' && AppState.isSpacePressed) return;
@@ -218,51 +221,40 @@ function bindPenetratingSelectionEvents(canvas) {
         // 只处理左键点击
         if (opt.e.button !== 0) return;
         
-        // 关键：如果有 hoverTarget，强制将其设为 fabric 的 target
+        // 关键：如果有 hoverTarget，记录它
         if (hoverTarget) {
-            // 保存 hoverTarget 引用
-            const targetToSelect = hoverTarget;
-            
-            // 标记正在执行穿透选择
+            penetratingTarget = hoverTarget;
             canvas._isPenetratingSelection = true;
-            canvas._penetratingTarget = targetToSelect;
             
-            // 清除 hover 高亮（但保留 targetToSelect 引用）
+            // 清除 hover 高亮
             if (hoverHighlightRect) {
                 canvas.remove(hoverHighlightRect);
                 hoverHighlightRect = null;
             }
             hoverTarget = null;
-            
-            // 强制覆盖 fabric 的 target 检测结果
-            // 通过修改 opt.target 来告诉 fabric 应该选中哪个对象
-            opt.target = targetToSelect;
         } else {
+            penetratingTarget = null;
             canvas._isPenetratingSelection = false;
-            canvas._penetratingTarget = null;
         }
     });
     
-    // mouse:down 中确保选中正确的对象
-    canvas.on('mouse:down', function(opt) {
-        if (canvas._isPenetratingSelection && canvas._penetratingTarget) {
-            const targetObj = canvas._penetratingTarget;
+    // mouse:down 中执行穿透选择
+    canvas.on('mouse:down', function() {
+        if (penetratingTarget && canvas._isPenetratingSelection) {
+            const targetObj = penetratingTarget;
             
             // 重置状态
+            penetratingTarget = null;
             canvas._isPenetratingSelection = false;
-            canvas._penetratingTarget = null;
             
-            // 确保选中的是我们指定的对象
-            const currentActive = canvas.getActiveObject();
-            if (currentActive !== targetObj) {
-                // fabric 选错了，手动修正
+            // 强制选中目标对象
+            // 使用 requestAnimationFrame 确保在 fabric 处理完后执行
+            requestAnimationFrame(() => {
                 canvas.discardActiveObject();
                 canvas.setActiveObject(targetObj);
-            }
-            
-            // 将对象置顶
-            targetObj.bringToFront();
-            canvas.requestRenderAll();
+                targetObj.bringToFront();
+                canvas.requestRenderAll();
+            });
         }
     });
     
